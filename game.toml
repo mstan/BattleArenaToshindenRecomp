@@ -33,6 +33,7 @@ known_crc32 = [
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
+mod_function_entry_funcs = ["0x80196874", "0x80197C70"]
 
 [runtime]
 window_title = "BattleArenaToshinden Recompiled"
@@ -44,6 +45,24 @@ aspect_ratio = "4:3"
 
 [controller]
 default_mode = "digital"
+
+[widescreen]
+# Activation belongs to the default-disabled title mod in the launcher.
+offer = false
+offer_ultrawide = true
+adaptive_view = true
+gte_game_mode = true
+native_wide = false
+auto_ui_squash = false
+hud_sprt_squash = false
+precise_nclip = true
+nw_hud_corners = true
+clear_reveal = true
+
+[widescreen.cull]
+auto_screen_x = true
+screen_w_imms = ["0x140"]
+screen_h_imms = ["0xF0"]
 
 # Online mount gate: digests + track count + optional TOC fingerprint
 # (see docs/NETPLAY.md).

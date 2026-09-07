@@ -30,3 +30,33 @@ python psxrecomp/psxrecomp_cli.py rebuild --config game.toml --project-root . --
 
 The playable executable is `build-release/BattleArenaToshinden_Recompiled.exe`.
 Retail BIOS is optional for generation; the validation run used SCPH1001.
+
+## Display enhancements validated September 7, 2026
+
+- Windows Release build passed with the title's optional widescreen and frame
+  blending packages staged in the launcher's Mods catalog. Both default off.
+- Adaptive presentation was captured at 960x720, 1280x720, 1680x720, and
+  2560x720, plus a square window and a return to 960x720. The game switched
+  between original 4:3 and wider projection as the window resized.
+- In the paused Eiji/Sofia battle, image measurements confirmed that the pause
+  panel retained its width and stayed centered throughout the resize sequence.
+  Health gauges grew between fixed outside margins and the centered timer;
+  labels, win markers, and pause text retained their authored proportions.
+- Presented captures showed wider stage geometry and a continuous, correctly
+  scaled panorama. The game uses the framework's projection-squash path before
+  CPU screen bounds; the automatic cull scan found no safe additional hooks.
+  This validates the observed scenes, not every stage/camera combination.
+- Options opened over a paused battle retained their centered layout at 21:9.
+  The introduction, title menu, and character selection remained native 4:3.
+- Disabling the widescreen mod and loading the same battle restored the
+  original pillarboxed presentation at 21:9. Local PGXP and frame blending
+  selections were preserved, and widescreen was re-enabled after this check.
+- Frame blending ran alongside adaptive widescreen: runtime telemetry reported
+  enabled interpolation, two history frames, and measured/target presentation
+  at 165 Hz. The plugin changes presentation settings only.
+- The standalone runtime packet-guard regression test passed. Explicit UI tags
+  fingerprint their command packets to reject stale tags on reused RAM.
+
+These checks cover the display milestone. Boss selection and desperation-move
+mods are separate follow-up work. Captures, measurement scripts, RAM dumps,
+and process logs remain local and ignored.

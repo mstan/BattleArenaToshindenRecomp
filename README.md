@@ -1,95 +1,96 @@
-# BattleArenaToshinden Recompiled
+# Battle Arena Toshinden Recompiled
 
-<!-- retcomm-readme-metrics -->
-[![GitHub downloads (all assets, all releases)](https://img.shields.io/github/downloads/mstan/BattleArenaToshindenRecomp/total)](https://github.com/mstan/BattleArenaToshindenRecomp/releases)
-[![GitHub downloads (latest release)](https://img.shields.io/github/downloads/mstan/BattleArenaToshindenRecomp/latest/total)](https://github.com/mstan/BattleArenaToshindenRecomp/releases/latest)
-[![GitHub release](https://img.shields.io/github/v/release/mstan/BattleArenaToshindenRecomp)](https://github.com/mstan/BattleArenaToshindenRecomp/releases/latest)
-<!-- /retcomm-readme-metrics -->
+> This recompilation is a byproduct of developing
+> [psxrecomp](https://github.com/mstan/psxrecomp). These are in-development
+> previews, with more testing and polish still to come. Contributions,
+> testing, issues, and PRs to the game or framework are welcome.
+> Read more: [Recomp + AI: 5 Months Later](https://1379.tech/recomp-ai-5-months-later/).
 
-Static recompilation of **BattleArenaToshinden** built on
-[psxrecomp](https://github.com/mstan/psxrecomp) and
-[recomp-ui](https://github.com/mstan/recomp-ui).
+Static recompilation of **Battle Arena Toshinden (USA)**, PlayStation serial
+**SCUS-94200**, to native code using [psxrecomp](https://github.com/mstan/psxrecomp)
+and [recomp-ui](https://github.com/mstan/recomp-ui).
 
-Battle Arena Toshinden recompiled for modern platforms.
+## Status
 
-| | |
-|---|---|
-| Players | 2 |
-| Region | USA |
-| Publisher | Takara |
-| Year | 1995 |
+The game boots through its introduction and character selection into combat.
+The initial playable baseline was validated and approved for enhancements on
+September 6, 2026. The launcher includes disc setup, settings, and a Mods page.
+See [validation notes](validation/README.md) for the tested build and scope.
 
-Scaffolded with the New Project Layout. See
-`psxrecomp/docs/GAME_PROJECT_SETUP.md` for the full flow.
+## Playing
 
-<!-- retcomm-readme-launcher -->
-## RetComM Launcher
+Select your legally obtained **USA BIN/CUE disc image** in the launcher, use
+Generate & Build when prompted, and launch the game. Keep all 14 tracks beside
+the CUE file so the game can play its CD audio.
 
-You can run this title **standalone** (release zip + the built-in recomp-ui
-Generate & Build flow), or manage installs, updates, ROM/BIOS wiring, and queued
-builds more intuitively with
-**[RetComM Launcher](https://github.com/TechnicallyComputers/RetComM-Launcher)** —
-the Retro Compilation Manager hub for self-compiling recomps.
+The framework supplies MIT-licensed OpenBIOS. A supported retail BIOS dump is
+optional; validation used SCPH1001. Disc images and retail BIOS files are not
+included in this repository.
 
-[Downloads](https://github.com/TechnicallyComputers/RetComM-Launcher/releases) ·
-[Full README & features](https://github.com/TechnicallyComputers/RetComM-Launcher#readme)
+Enable enhancements on the launcher's **Mods** page. The title's widescreen
+and frame blending features are disabled by default. Saves and mod selections
+are local to the installation.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/TechnicallyComputers/RetComM-Launcher/main/docs/screenshots/hub-and-game-launcher.png" alt="RetComM hub with a background build, next to a title’s recomp-ui launcher" width="720">
-</p>
+## Layout
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/TechnicallyComputers/RetComM-Launcher/main/docs/screenshots/queue-and-background-build.png" alt="Background cmake build with titles queued" width="720">
-</p>
+- `iso/` - local disc image and audio tracks, ignored by Git.
+- `disc/` - extracted `SCUS_942.00` boot executable and disc files, ignored by Git.
+- `seeds/` - function entry points used by the recompiler.
+- `generated/` - generated native C, rebuilt locally and ignored by Git.
+- `src/mods/` - title-specific native mod plugins.
+- `mods/preloaded/` - bundled mod manifests and documentation.
+- `psxrecomp/` and `recomp-ui/` - pinned framework and launcher submodules.
+- `game.toml` - disc identity, compilation, and runtime configuration.
 
-RetComM checks for updates, rebuilds with existing build data when possible,
-shares the portable toolchain used by per-title launchers, and automates
-BIOS/ROM/save plumbing so you are not stuck repeating each game’s wizard by hand.
-<!-- /retcomm-readme-launcher -->
+## Build
 
-## Legal
+Initialize the pinned submodules, then use the framework's setup commands
+from this directory with Python 3 and the supported RetComM toolchain:
 
-You must own the original game. Disc images under `disc/` are gitignored and
-must never be committed. Retail BIOS dumps are not redistributed; OpenBIOS is
-used for Generate unless you supply your own SCPH locally.
-
-Default app icon: `assets/psxrecomp.ico` (and `.png` / `.svg`) — RetComM-themed controller mark from `psxrecomp/assets/`. Windows builds embed it via `APP_ICON`.
-
-Optional box art under `launcher_assets/img/` may come from
-[libretro-thumbnails](https://github.com/libretro-thumbnails/libretro-thumbnails)
-(`Named_Boxarts`); see `BOXART_SOURCE.txt` when present.
-
-## Quick start (dev)
-
-```bash
+```sh
 git submodule update --init --recursive
-./psxrecomp/tools/ci/build_emitters.sh
-python3 psxrecomp/psxrecomp_cli.py generate \
-  --config game.toml --project-root . --disc disc/<your>.cue
-cmake -S . -B build-release -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build-release --target psx-runtime
+python psxrecomp/psxrecomp_cli.py generate --config game.toml --project-root . --disc "iso/Battle Arena Toshinden (USA).cue"
+python psxrecomp/psxrecomp_cli.py rebuild --config game.toml --project-root . --build-dir build-release --no-pgo
 ```
 
-Zip prefix for CI artifacts: `bat`.
+The Windows executable is `build-release/BattleArenaToshinden_Recompiled.exe`.
+The launcher also exposes the same Generate & Build workflow. See the
+[framework setup guide](psxrecomp/docs/GAME_PROJECT_SETUP.md) for prerequisites
+and other platforms. SDL3 is the default host backend; SDL2 is an explicit
+compatibility build option.
 
-## Symbols
+Submodule gitlinks are the authoritative framework versions. Generated code,
+disc data, local settings, saves, and build output do not belong in commits.
 
-Progressive map: `symbols.toml` → `python3 tools/sync_symbols.py` →
-`psx_symbols.h` (`PSX_FN_*`). See `psxrecomp/docs/SYMBOLS.md`.
+## Built-in mods
 
-## Framework pins
+**Battle Arena Toshinden Widescreen** offers fixed 16:9 and Adaptive. Adaptive
+follows the current window or fullscreen aspect from 4:3 through 32:9, the
+framework's current limit. Wider gameplay views reveal more of the stage;
+health gauges extend to the perimeter while labels, icons, timer, and pause UI
+retain their authored proportions. True 2D screens retain their 4:3 presentation.
 
-Submodule gitlinks (`psxrecomp`, optional `recomp-ui`, nested `recomp-net`)
-are authoritative. `framework_pins.txt` is an optional scaffold snapshot;
-release CI logs SHAs with `record_pins.sh` but builds whatever the gitlinks
-resolve to. Bump submodules deliberately — do not float on `main`/`master`
-in release CI.
+**Battle Arena Toshinden Frame Blending** presents completed game frames at
+the display's measured refresh rate or a selected 60, 90, 120, 144, 165, or
+240 Hz target. Motion-adaptive blending reduces trails on large image changes.
+Game simulation, inputs, timers, and audio retain their original cadence.
+This is temporal image blending, not motion-vector frame generation.
+
+The shared framework also supplies standard enhancement packages, including
+PGXP. Each package's description and options are available on the Mods page.
+
+## License
+
+No game disc data or retail PlayStation BIOS is redistributed here. OpenBIOS
+is provided under its MIT license; see the framework's OpenBIOS license notice.
+Launcher box art attribution is recorded in
+[BOXART_SOURCE.txt](launcher_assets/img/BOXART_SOURCE.txt).
 
 <!-- retcomm-readme-raid -->
 ---
 
 <p align="center">
-  <sub><b>R.A.I.D. — Retro AI Development</b> · a Discord for AI-assisted retro reverse-engineering, decomp &amp; recomp</sub>
+  <sub><b>R.A.I.D. - Retro AI Development</b> / a Discord for AI-assisted retro reverse-engineering, decomp &amp; recomp</sub>
 </p>
 
 <p align="center">

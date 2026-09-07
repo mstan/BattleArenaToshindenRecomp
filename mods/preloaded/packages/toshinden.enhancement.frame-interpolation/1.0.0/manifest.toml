@@ -1,0 +1,91 @@
+format_version = 5
+id = "toshinden.enhancement.frame-interpolation"
+version = "1.0.0"
+name = "Battle Arena Toshinden Frame Interpolation"
+author = "mstan"
+description = "Presentation-only temporal frame blending. Game logic, timers, input, and audio remain at their stock cadence."
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SCUS-94200"
+exe_sha256 = "928c495ca0e9221d034085e17a79e81789738b0c389898c1d5f2384f51330f66"
+
+[[feature]]
+id = "frame-interpolation"
+name = "Frame Interpolation"
+description = "Blend completed display images at the selected presentation rate without accelerating gameplay, timers, input, or audio. This is not motion-vector frame generation."
+group = "Frame Rate"
+default_enabled = false
+
+[[option]]
+feature = "frame-interpolation"
+id = "rate"
+label = "Presentation rate"
+description = "Display refresh is recommended for even cadence. Motion-adaptive clarity reduces double-image trails. Requires OpenGL."
+group = "Frame Rate"
+type = "choice"
+default = "display"
+
+[[option.choice]]
+value = "display"
+label = "Display refresh (Recommended)"
+
+[[option.choice]]
+value = "60"
+label = "60 FPS"
+
+[[option.choice]]
+value = "90"
+label = "90 FPS"
+
+[[option.choice]]
+value = "120"
+label = "120 FPS"
+
+[[option.choice]]
+value = "144"
+label = "144 FPS"
+
+[[option.choice]]
+value = "165"
+label = "165 FPS"
+
+[[option.choice]]
+value = "240"
+label = "240 FPS"
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.display"
+when = { rate = "display" }
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.60"
+when = { rate = "60" }
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.90"
+when = { rate = "90" }
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.120"
+when = { rate = "120" }
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.144"
+when = { rate = "144" }
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.165"
+when = { rate = "165" }
+
+[[plugin]]
+feature = "frame-interpolation"
+id = "toshinden.framerate.240"
+when = { rate = "240" }
