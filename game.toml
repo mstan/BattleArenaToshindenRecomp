@@ -33,7 +33,7 @@ known_crc32 = [
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
-mod_function_entry_funcs = ["0x80196874", "0x80197C70"]
+mod_function_entry_funcs = ["0x80196874", "0x80197C70", "0x8017A0D4"]
 
 [runtime]
 window_title = "BattleArenaToshinden Recompiled"

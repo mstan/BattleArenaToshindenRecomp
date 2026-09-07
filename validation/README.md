@@ -57,9 +57,8 @@ Retail BIOS is optional for generation; the validation run used SCPH1001.
 - The standalone runtime packet-guard regression test passed. Explicit UI tags
   fingerprint their command packets to reject stale tags on reused RAM.
 
-These checks cover the display milestone. Boss selection and desperation-move
-mods are separate follow-up work. Captures, measurement scripts, RAM dumps,
-and process logs remain local and ignored.
+Captures, measurement scripts, RAM dumps, and process logs remain local and
+ignored. Gameplay validation is recorded below.
 
 ### Attract-mode lettering follow-up
 
@@ -71,3 +70,42 @@ centers those glyphs instead of assigning each letter a player-side anchor. Pres
 captures at 4:3, 21:9 and 32:9 confirmed one centered word of constant width;
 the normal fight HUD and pause panel were rechecked at 21:9. Health gauges
 still fill the available width; player labels and win markers remain at the edges.
+
+
+## Gameplay mods validated September 7, 2026
+
+- The Release build stages eight packages: four title packages and four shared
+  framework packages. Boss Roster and Desperation at Any Health both default off
+  and target the USA executable hash.
+- Boss selection uses the native character IDs (Gaia 8, Sho 9), confirmation,
+  model loading, and combat paths. Generated portrait artwork occupies unused
+  selection-screen VRAM; no original disc assets are redistributed.
+- P1 selected each boss and entered combat. In VS HUMAN, actual second-controller
+  keyboard input independently selected P2's boss. Gaia versus Sho entered a
+  match; a Gaia mirror match retained distinct native red/blue costumes.
+- Both players returned from the boss column to their previous regular fighter
+  with the original portraits and cursors restored. Saving and loading the boss
+  selection restored both portraits and selection indicators. Loading screens
+  retained the boss portraits and native VS graphic while the added selector
+  disappeared with the rest of the selection menu.
+- VS COMPUTER also exposes the boss column when selecting the CPU opponent.
+  The native selection handler and linked thumbnail packets guard the added UI.
+- A fresh launch with Boss Roster disabled showed the original eight-character
+  menu; Up did not select either boss for either player.
+- Eiji's normal desperation command was exercised for both player slots at full
+  health (0 accumulated damage out of 896 maximum). With the mod enabled, the
+  command matcher progressed through all three direction tokens and started
+  desperation action 0xB5. With it disabled, the same full-health command was
+  rejected. At low health (720 accumulated damage), the disabled-mod control
+  still started action 0xB5. This checks both command acceptance and execution;
+  every character's distinct move command has not been individually exercised.
+- A save state made with the instruction already patched initially exposed a
+  dispatch-invalidation bug. The plugin now re-arms the four-byte executable
+  range each VBlank. Both players' full-health commands passed after reload.
+- The standalone packet-guard regression test and assertions over seven live
+  desperation traces passed. GPT-5.5 adversarial source review found no remaining
+  concrete blocker after the menu-state, cursor, and save/load fixes.
+
+The validation used temporary, separate P2 keyboard bindings. Original local
+controller preferences were restored afterward. The mods use the normal launcher
+selection and restart workflow.

@@ -27,9 +27,9 @@ The framework supplies MIT-licensed OpenBIOS. A supported retail BIOS dump is
 optional; validation used SCPH1001. Disc images and retail BIOS files are not
 included in this repository.
 
-Enable enhancements on the launcher's **Mods** page. The title's widescreen
-and frame blending features are disabled by default. Saves and mod selections
-are local to the installation.
+Enable enhancements on the launcher's **Mods** page. The title's widescreen,
+frame blending, and optional gameplay packages are disabled by default. Saves and
+mod selections are local to the installation.
 
 ## Layout
 
@@ -75,6 +75,18 @@ the display's measured refresh rate or a selected 60, 90, 120, 144, 165, or
 240 Hz target. Motion-adaptive blending reduces trails on large image changes.
 Game simulation, inputs, timers, and audio retain their original cadence.
 This is temporal image blending, not motion-vector frame generation.
+
+**Battle Arena Toshinden Boss Roster** adds Gaia and Sho as optional selectable
+fighters. The normal eight-character roster stays in place; Up/Down switches a
+player between the regular roster and a central boss column, Left/Right chooses
+Gaia or Sho inside that column, and the normal confirm button starts the match
+through the game's selection path. The package uses new generated portrait art;
+source details are documented in `assets/mods/boss-roster/SOURCE.md`.
+
+**Battle Arena Toshinden Desperation at Any Health** lets players perform
+each character's normal desperation command at any health. It does not add a
+one-button shortcut and does not change health, damage, KO handling, max HP, or
+HUD gauges.
 
 The shared framework also supplies standard enhancement packages, including
 PGXP. Each package's description and options are available on the Mods page.

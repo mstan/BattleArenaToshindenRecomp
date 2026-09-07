@@ -1,0 +1,23 @@
+format_version = 5
+id = "toshinden.gameplay.desperation-at-any-health"
+version = "1.0.0"
+name = "Battle Arena Toshinden Desperation at Any Health"
+author = "mstan"
+description = "Lets players perform each character's normal desperation command at any health. There is no one-button shortcut, and health, damage, KO handling, max HP, and HUD gauges remain stock."
+resolver = "declarative"
+save_compatibility = "shared"
+
+[[target]]
+game_id = "SCUS-94200"
+exe_sha256 = "928c495ca0e9221d034085e17a79e81789738b0c389898c1d5f2384f51330f66"
+
+[[feature]]
+id = "desperation-at-any-health"
+name = "Desperation at Any Health"
+description = "Allow normal desperation commands at any health. No one-button shortcut is added; damage, KO, health, max HP, and gauges are unchanged."
+group = "Gameplay"
+default_enabled = false
+
+[[plugin]]
+feature = "desperation-at-any-health"
+id = "toshinden.desperation.any-health"
