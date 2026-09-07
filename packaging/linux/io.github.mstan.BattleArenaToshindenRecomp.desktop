@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Battle Arena Toshinden Recompiled
+Comment=Static recompilation of Battle Arena Toshinden
+Exec=BattleArenaToshinden_Recompiled
+Icon=io.github.mstan.BattleArenaToshindenRecomp
+Categories=Game;
+Terminal=false

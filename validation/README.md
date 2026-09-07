@@ -161,3 +161,26 @@ add framework save-state serialization or reserve bytes in retail game structs.
 - README images are actual presentation captures: native 4:3 title screen,
   revised EXTRA selection, and 21:9 Gaia versus Sho gameplay. No generated
   mockups are used for the screenshots.
+
+## Initial release packaging, September 7, 2026
+
+- Removed the Extra Roster navigation hint and its bottom background panel.
+  Rebuilt and visually checked the Gaia/Sho selector, then refreshed its README
+  screenshot. Cleanup committed separately as `18ff91b`.
+- Windows release uses the validated game code with debug tools disabled,
+  static runtime dependencies, SDL3, and lobby version `0.1.0`.
+- A fresh extraction of the Windows ZIP booted with bundled OpenBIOS into
+  Eiji versus Ellis combat and accepted native keyboard input. No retail BIOS,
+  saved configuration, or extracted executable was copied into the test package.
+- Windows packaging checked system-only DLL imports, all eight bundled mod
+  packages, clean player defaults, and exclusion of disc data, retail BIOS,
+  generated source files, saves, and developer mod selections.
+- Linux AppImage built with SDL3 and debug tools disabled under Ubuntu 24.04
+  in WSL. Layout checks passed, including fresh data seeding, version `0.1.0`,
+  the bundled catalog, and preservation of an existing input mapping.
+- The actual AppImage ran a 20-second startup smoke with bundled OpenBIOS,
+  the user's disc, Mesa offscreen OpenGL, and dummy audio. Runtime initialization
+  passed; this was not a complete Linux gameplay or audio validation.
+- Native release scripts share root `VERSION` and use the framework's mod
+  staging helpers. The generic setup-host workflow remains manual so a native
+  release tag does not publish competing setup-only downloads.

@@ -69,6 +69,7 @@ Download the **Windows ZIP** or **Linux x86_64 AppImage** from
 [Releases](https://github.com/mstan/BattleArenaToshindenRecomp/releases/latest).
 Extract the Windows package before running it. On Linux, make the AppImage
 executable and launch it. These packages contain the compiled game runtime.
+The Linux package requires glibc 2.38 or newer, such as Ubuntu 24.04.
 
 Select your legally obtained **USA BIN/CUE disc image** in the launcher, use
 Generate & Build when prompted, and launch the game. Keep all 14 tracks beside

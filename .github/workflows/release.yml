@@ -57,9 +57,9 @@ on:
         required: false
         type: boolean
         default: true
-  push:
-    tags:
-      - 'v*'
+  # Native Windows/AppImage releases use tools/package_release.ps1 and
+  # tools/package_appimage.sh. Keep setup-host builds explicitly dispatched
+  # so a native release tag does not publish a second set of setup-only assets.
 
 concurrency:
   group: bat-release-${{ github.event_name }}-${{ github.ref }}-${{ github.run_id }}

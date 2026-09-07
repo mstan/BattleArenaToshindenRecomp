@@ -1,0 +1,76 @@
+#!/bin/sh
+# AppImage entry point. Tokens are stamped by tools/package_appimage.sh.
+set -eu
+
+if [ -z "${APPDIR:-}" ]; then
+    echo "@APP_NAME@: APPDIR is not set; launch this through the AppImage runtime." >&2
+    exit 1
+fi
+
+if [ -n "${@ENV_PREFIX@_DATA_DIR:-}" ]; then
+    data_dir=$@ENV_PREFIX@_DATA_DIR
+else
+    if [ -n "${XDG_DATA_HOME:-}" ]; then
+        data_home=$XDG_DATA_HOME
+    elif [ -n "${HOME:-}" ]; then
+        data_home=$HOME/.local/share
+    else
+        echo "@APP_NAME@: HOME is not set; set @ENV_PREFIX@_DATA_DIR explicitly." >&2
+        exit 1
+    fi
+    data_dir=$data_home/@ARTIFACT_NAME@
+fi
+
+payload=$APPDIR/usr/share/@PAYLOAD_DIR@
+runtime=$APPDIR/usr/bin/@EXE_NAME@
+
+if [ ! -x "$runtime" ] || [ ! -f "$payload/@GAME_TOML@" ]; then
+    echo "@APP_NAME@: AppImage payload is incomplete." >&2
+    exit 1
+fi
+
+mkdir -p "$data_dir" "$data_dir/saves" "$data_dir/cache" "$data_dir/mods"
+
+for tree in assets bios licenses; do
+    if [ -d "$payload/$tree" ]; then
+        mkdir -p "$data_dir/$tree"
+        cp -a "$payload/$tree/." "$data_dir/$tree/"
+        chmod -R u+rwX "$data_dir/$tree"
+    fi
+done
+if [ -d "$payload/mods" ]; then
+    cp -a "$payload/mods/." "$data_dir/mods/"
+    chmod -R u+rwX "$data_dir/mods"
+fi
+
+for file in @GAME_TOML@ game_options.toml README.md VERSION RELEASE_NOTES.md THIRD_PARTY_ATTRIBUTION.md RELEASE.txt START_HERE.txt LICENSE; do
+    if [ -f "$payload/$file" ]; then
+        cp -f "$payload/$file" "$data_dir/$file"
+        chmod u+rw "$data_dir/$file"
+    fi
+done
+
+if [ ! -f "$data_dir/input.ini" ] && [ -f "$payload/input.ini" ]; then
+    cp "$payload/input.ini" "$data_dir/input.ini"
+    chmod u+rw "$data_dir/input.ini"
+fi
+
+printf '%s\n' "@VERSION@" > "$data_dir/.appimage-layout-version"
+
+if [ "${@ENV_PREFIX@_SEED_ONLY:-0}" = "1" ]; then
+    printf '%s\n' "$data_dir"
+    exit 0
+fi
+
+launcher=$data_dir/.@EXE_NAME@-runtime
+ln -sfn "$runtime" "$launcher"
+export @ENV_PREFIX@_APPIMAGE_PATH=${APPIMAGE:-}
+export RECOMP_APPIMAGE_PATH=${APPIMAGE:-}
+unset APPIMAGE
+
+export PATH="$APPDIR/usr/bin${PATH:+:$PATH}"
+export LD_LIBRARY_PATH="$APPDIR/usr/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export XDG_DATA_DIRS="$APPDIR/usr/share${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
+
+cd "$data_dir"
+exec "$launcher" "$@"

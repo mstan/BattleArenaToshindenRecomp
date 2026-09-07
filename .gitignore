@@ -14,6 +14,9 @@
 /release-stage/
 /dist/
 *.zip
+*.AppImage
+*.sha256
+/release-linux/
 
 # Local PlayStation assets (never commit dumps / BIOS)
 /bios/

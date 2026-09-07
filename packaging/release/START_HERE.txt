@@ -1,0 +1,26 @@
+Battle Arena Toshinden Recompiled 0.1.0 - Initial Release
+
+Believed to be stable based on gameplay testing and user validation,
+despite being an early release. Bug reports are welcome.
+
+1. Extract the Windows ZIP, or mark the Linux AppImage executable and run it.
+2. Select your legally obtained USA BIN/CUE disc image in the launcher.
+   Keep all 14 tracks together beside the CUE. No disc data is included.
+3. The bundled MIT-licensed OpenBIOS is available by default. You can also
+   select a supported retail BIOS dump that you provide.
+4. Optional enhancements are on the Mods page and ship disabled.
+5. Choose PLAY for local play, or NETPLAY to host/join a two-player session.
+   Configure your local controller under PLAYER 1 / NETPLAY. In the game,
+   choose VS HUMAN or have P2 press Start. Multitap is not used.
+
+Netplay runs vanilla: all mods are disabled for the session. Two local peers
+passed rollback input and state-sync checks; internet matches are not yet
+validated. See README.md for tested scope and enhancement controls.
+
+On Windows, keep the package together in a writable folder. Your settings
+and saves are local. On Linux, the AppImage creates a writable user data
+folder at ~/.local/share/BattleArenaToshindenRecomp (or under XDG_DATA_HOME).
+Set BAT_RECOMP_DATA_DIR to override this location.
+
+Project, instructions, and issue reports:
+https://github.com/mstan/BattleArenaToshindenRecomp
