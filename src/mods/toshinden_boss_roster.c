@@ -81,17 +81,18 @@ static void toshinden_suppress_directional_input(CPUState *cpu) {
     cpu->gpr[6] &= ~TOSHINDEN_INPUT_DIRECTIONAL;
 }
 
-static void toshinden_enter_boss_page(CPUState *cpu, uint32_t player,
-                                      int index, int16_t current_char) {
+static void toshinden_enter_extra_row(CPUState *cpu, uint32_t player,
+                                      int index, int16_t current_char,
+                                      int16_t extra_char) {
     if (toshinden_is_normal_char(current_char))
         s_previous_normal_char[index] = current_char;
 
-    toshinden_set_char(player, TOSHINDEN_CHAR_GAIA);
+    toshinden_set_char(player, extra_char);
     psx_mod_write_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET, 0);
     toshinden_suppress_directional_input(cpu);
 }
 
-static void toshinden_leave_boss_page(CPUState *cpu, uint32_t player,
+static void toshinden_leave_extra_row(CPUState *cpu, uint32_t player,
                                       int index) {
     int16_t restore = s_previous_normal_char[index];
 
@@ -103,10 +104,24 @@ static void toshinden_leave_boss_page(CPUState *cpu, uint32_t player,
     toshinden_suppress_directional_input(cpu);
 }
 
-static void toshinden_toggle_boss(CPUState *cpu, uint32_t player,
-                                  int16_t current_char) {
-    int16_t next = current_char == TOSHINDEN_CHAR_GAIA ?
-        TOSHINDEN_CHAR_SHO : TOSHINDEN_CHAR_GAIA;
+static void toshinden_move_extra_row(CPUState *cpu, uint32_t player,
+                                     int index, int16_t current_char,
+                                     int up) {
+    int16_t next;
+
+    if (up) {
+        if (current_char == TOSHINDEN_CHAR_GAIA) {
+            toshinden_leave_extra_row(cpu, player, index);
+            return;
+        }
+        next = TOSHINDEN_CHAR_GAIA;
+    } else {
+        if (current_char == TOSHINDEN_CHAR_SHO) {
+            toshinden_leave_extra_row(cpu, player, index);
+            return;
+        }
+        next = TOSHINDEN_CHAR_SHO;
+    }
 
     toshinden_set_char(player, next);
     toshinden_set_pair_flag_for_match(player, next);
@@ -140,24 +155,36 @@ static void toshinden_boss_select_helper_entry(CPUState *cpu,
     input = (uint16_t)cpu->gpr[6];
 
     if ((input & TOSHINDEN_INPUT_CONFIRM) != 0u) {
-        if (toshinden_is_boss_char(current_char))
+        if (toshinden_is_boss_char(current_char)) {
             toshinden_set_pair_flag_for_match(player, current_char);
+            if ((input & TOSHINDEN_INPUT_DIRECTIONAL) != 0u)
+                toshinden_suppress_directional_input(cpu);
+        }
         return;
     }
 
     if (!toshinden_is_boss_char(current_char)) {
-        if ((input & TOSHINDEN_INPUT_PAGE) != 0u)
-            toshinden_enter_boss_page(cpu, player, index, current_char);
+        if ((input & TOSHINDEN_INPUT_UP) != 0u)
+            toshinden_enter_extra_row(cpu, player, index, current_char,
+                TOSHINDEN_CHAR_SHO);
+        else if ((input & TOSHINDEN_INPUT_DOWN) != 0u)
+            toshinden_enter_extra_row(cpu, player, index, current_char,
+                TOSHINDEN_CHAR_GAIA);
         return;
     }
 
-    if ((input & TOSHINDEN_INPUT_PAGE) != 0u) {
-        toshinden_leave_boss_page(cpu, player, index);
+    if ((input & TOSHINDEN_INPUT_UP) != 0u) {
+        toshinden_move_extra_row(cpu, player, index, current_char, 1);
+        return;
+    }
+
+    if ((input & TOSHINDEN_INPUT_DOWN) != 0u) {
+        toshinden_move_extra_row(cpu, player, index, current_char, 0);
         return;
     }
 
     if ((input & TOSHINDEN_INPUT_LR) != 0u)
-        toshinden_toggle_boss(cpu, player, current_char);
+        toshinden_suppress_directional_input(cpu);
 }
 
 static void toshinden_boss_roster_activate(void) {

@@ -109,3 +109,55 @@ still fill the available width; player labels and win markers remain at the edge
 The validation used temporary, separate P2 keyboard bindings. Original local
 controller preferences were restored afterward. The mods use the normal launcher
 selection and restart workflow.
+
+
+## Extra Roster refinement, September 7, 2026
+
+- Public heading and package name are now EXTRA / Extra Roster. Stable internal
+  package and plugin IDs remain unchanged so existing mod selections carry over.
+- Vertical navigation matches the layout: Gaia above Sho above the eight-character
+  row. Up cycles roster -> Sho -> Gaia -> roster; Down reverses that order.
+  Left/Right is native roster movement on the bottom row and a no-op on extras.
+- A live VS HUMAN run passed 34 assertions using separate native P1/P2 keyboard
+  inputs. Both directions, row wrapping, returning to the current session's last
+  regular selection, and Left/Right no-op behavior were covered. Confirm combined
+  with Right kept each extra selected and entered Gaia versus Sho successfully.
+- Adversarial review caught the confirm/direction leak; the mod now strips every
+  direction bit on extra-row confirm before passing confirmation to native code.
+- Replacement portraits were generated from character-wiki references and local
+  original-PS1 gameplay captures. Gaia uses his enclosed first-game armor; Sho
+  uses muted brown hair and a purple cowl. The same new art was visually checked
+  in the small icons, large portraits, and versus loading screen.
+- Release build and package staging passed. Reference captures and the live
+  input trace remain ignored; artwork source notes and prompts accompany the PNGs.
+
+Existing save-state limitation: the selected Gaia/Sho ID survives loading, but
+its remembered regular-roster return slot is host-session state, not serialized.
+Loading a state saved on an extra can therefore return to the current session's
+last regular selection (or its default after restart). This revision does not
+add framework save-state serialization or reserve bytes in retail game structs.
+
+## Netplay and publication validation, September 7, 2026
+
+- Enabled the actual recomp-net and lobby targets in the title build, with
+  the shared online lobby URL and a two-player maximum. Release build passed.
+- Two independent runtime instances used LAN UDP over loopback, rollback mode,
+  separate writable save directories, and the same USA disc / SCPH1001 BIOS.
+- P2 Start joined the selection screen; separate peer inputs selected fighters
+  and entered Kayin versus Kayin. Movement and attack inputs reached the correct
+  standard controller port on both peers in all 20 sampled routing checks.
+- Compared 416 core-state digest samples through simulation tick 13280: all
+  matched. Neither peer's diagnostic samples reported a desync. This covers
+  roughly 3.7 minutes of simulation, including boot, menus, and combat.
+- Launcher visibly exposes NETPLAY and connects to the online lobby browser.
+  Two-player sessions use standard ports;
+  no Multitap is armed. Disabled the optional Multitap analog extension in the
+  title configuration and both Multitap settings in the local installation.
+- GPT-5.5 adversarial review confirmed local-input-to-session-slot routing and
+  the two-player port limit. Internet / NAT traversal and adverse-network
+  rollback correction were not exercised by this loopback test.
+- The framework deliberately clears all mods for vanilla netplay sessions.
+  Offline enhancement validation above remains separate from this test.
+- README images are actual presentation captures: native 4:3 title screen,
+  revised EXTRA selection, and 21:9 Gaia versus Sho gameplay. No generated
+  mockups are used for the screenshots.

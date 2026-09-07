@@ -556,6 +556,7 @@ static uint8_t toshinden_font_rows(char c, int row) {
     case 'T': { static const uint8_t r[7] = { 0x1F, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04 }; return r[row]; }
     case 'U': { static const uint8_t r[7] = { 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0E }; return r[row]; }
     case 'W': { static const uint8_t r[7] = { 0x11, 0x11, 0x11, 0x15, 0x15, 0x15, 0x0A }; return r[row]; }
+    case 'X': { static const uint8_t r[7] = { 0x11, 0x11, 0x0A, 0x04, 0x0A, 0x11, 0x11 }; return r[row]; }
     case '/': { static const uint8_t r[7] = { 0x01, 0x02, 0x02, 0x04, 0x08, 0x08, 0x10 }; return r[row]; }
     case ':': { static const uint8_t r[7] = { 0x00, 0x04, 0x04, 0x00, 0x04, 0x04, 0x00 }; return r[row]; }
     default:
@@ -730,7 +731,7 @@ static void toshinden_build_boss_ui(ToshindenUiBuilder *builder) {
     toshinden_emit_big_portrait(builder, p2_char, 1);
 
     toshinden_emit_rect(builder, 282, 50, 76, 16, shadow);
-    toshinden_emit_text(builder, 284, 54, "BOSSES", heading);
+    toshinden_emit_text(builder, 290, 54, "EXTRA", heading);
 
     toshinden_emit_boss_card(builder, TOSHINDEN_CHAR_GAIA,
         TOSHINDEN_GAIA_Y, "GAIA",
@@ -743,7 +744,7 @@ static void toshinden_build_boss_ui(ToshindenUiBuilder *builder) {
 
     toshinden_emit_rect(builder, 112, 224, 416, 13, shadow);
     toshinden_emit_text(builder, 116, 228,
-        "UP/DOWN: BOSSES  LEFT/RIGHT: SELECT", hint);
+        "UP/DOWN: ROW  LEFT/RIGHT: ROSTER", hint);
 }
 
 static void toshinden_finish_builder(ToshindenUiBuilder *builder) {

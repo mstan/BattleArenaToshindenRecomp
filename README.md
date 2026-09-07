@@ -10,6 +10,12 @@ Static recompilation of **Battle Arena Toshinden (USA)**, PlayStation serial
 **SCUS-94200**, to native code using [psxrecomp](https://github.com/mstan/psxrecomp)
 and [recomp-ui](https://github.com/mstan/recomp-ui).
 
+<p align="center">
+  <img src=".github/screenshots/title.png" alt="Original Battle Arena Toshinden title screen in 4:3" width="640">
+</p>
+
+*The original title screen, presented at its native 4:3 aspect ratio.*
+
 ## Status
 
 The game boots through its introduction and character selection into combat.
@@ -62,7 +68,7 @@ compatibility build option.
 Submodule gitlinks are the authoritative framework versions. Generated code,
 disc data, local settings, saves, and build output do not belong in commits.
 
-## Built-in mods
+## Enhancements
 
 **Battle Arena Toshinden Widescreen** offers fixed 16:9 and Adaptive. Adaptive
 follows the current window or fullscreen aspect from 4:3 through 32:9, the
@@ -70,18 +76,30 @@ framework's current limit. Wider gameplay views reveal more of the stage;
 health gauges extend to the perimeter while labels, icons, timer, and pause UI
 retain their authored proportions. True 2D screens retain their 4:3 presentation.
 
+![Gaia versus Sho in 21:9 adaptive ultrawide, with gauges extended to the edges](.github/screenshots/ultrawide.png)
+
+*21:9 gameplay with adaptive widescreen enabled. The stage view expands while
+characters, text, and icons retain their proportions.*
+
 **Battle Arena Toshinden Frame Blending** presents completed game frames at
 the display's measured refresh rate or a selected 60, 90, 120, 144, 165, or
 240 Hz target. Motion-adaptive blending reduces trails on large image changes.
 Game simulation, inputs, timers, and audio retain their original cadence.
 This is temporal image blending, not motion-vector frame generation.
 
-**Battle Arena Toshinden Boss Roster** adds Gaia and Sho as optional selectable
-fighters. The normal eight-character roster stays in place; Up/Down switches a
-player between the regular roster and a central boss column, Left/Right chooses
-Gaia or Sho inside that column, and the normal confirm button starts the match
-through the game's selection path. The package uses new generated portrait art;
-source details are documented in `assets/mods/boss-roster/SOURCE.md`.
+**Battle Arena Toshinden Extra Roster** adds Gaia and Sho as optional selectable
+fighters. The normal eight-character roster stays in place as the bottom row;
+Sho is the middle extra row and Gaia is the top extra row. Up cycles roster to
+Sho to Gaia to roster, Down cycles roster to Gaia to Sho to roster, and
+Left/Right only moves through the regular roster. The normal confirm button
+starts the match through the game's selection path. The package uses new
+generated portrait art; source details are documented in
+[portrait sources and generation prompts](assets/mods/boss-roster/SOURCE.md).
+
+![Gaia and Sho selectable in the EXTRA rows, above the original eight fighters](.github/screenshots/extra-roster.png)
+
+*Gaia and Sho in the EXTRA column, with original-game-inspired mod portraits.
+Up/Down moves between rows; Left/Right moves within the regular roster only.*
 
 **Battle Arena Toshinden Desperation at Any Health** lets players perform
 each character's normal desperation command at any health. It does not add a
@@ -90,6 +108,25 @@ HUD gauges.
 
 The shared framework also supplies standard enhancement packages, including
 PGXP. Each package's description and options are available on the Mods page.
+All title enhancements are optional and disabled by default.
+
+## Netplay
+
+**Two-player rollback netplay is enabled**, using the shared recomp-net lobby
+and transport. Open **NETPLAY** in the launcher to host or join an online room,
+or use LAN / Direct IP. Each player configures their local controller under
+**PLAYER 1 / NETPLAY**. Choose **VS HUMAN** in the game, or have P2 press Start
+to join. Two standard digital controller ports are used; Multitap is disabled.
+
+Both players need the same game build and the verified USA 14-track disc image.
+Netplay runs a vanilla session: the framework disables mods, including the
+widescreen, Extra Roster, frame blending, and desperation packages.
+
+Validation covered two local peers in rollback mode, independent P1/P2 input,
+character selection, and combat. All 416 sampled core-state hashes matched,
+with no reported desyncs. Internet latency and NAT traversal have not yet been
+tested for this title. See the [netplay guide](psxrecomp/docs/NETPLAY.md) for
+connection options and the [validation notes](validation/README.md) for scope.
 
 ## License
 

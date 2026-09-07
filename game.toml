@@ -45,7 +45,8 @@ aspect_ratio = "4:3"
 
 [controller]
 default_mode = "digital"
-multitap_analog = true
+# Two standard digital controller ports; no Multitap extension.
+multitap_analog = false
 
 [widescreen]
 # Activation belongs to the default-disabled title mod in the launcher.

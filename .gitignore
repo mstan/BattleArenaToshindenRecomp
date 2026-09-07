@@ -71,6 +71,7 @@ psx_crash.txt
 psx_last_run_report.json
 psx_screenshot.bmp
 psx_freeze_heartbeat.json
+psx_freeze_heartbeat.json.tmp
 starvation_dump.jsonl
 
 # Diagnostic dumps (root-level) — keep catalog / probe trackable

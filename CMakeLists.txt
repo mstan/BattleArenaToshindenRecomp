@@ -11,15 +11,9 @@ endif()
 
 project(BattleArenaToshindenRecomp LANGUAGES C CXX)
 
-# --- Opt-in product surfaces (OFF by default in the framework) -------------
-# Scaffold prompts / flags fill these. Without recomp-ui, PSX_RECOMP_UI is OFF.
-# Setup-host CI requires WIZARD_CMAKE_BLOCK / ENABLE_SETUP_WIZARD (FORCE_SETUP_HOST
-# alone does not open first-run / Generate & rebuild).
-# recomp-ui submodule present (PSX_RECOMP_UI defaults ON).
-# Full netplay UI — enable after adding recomp-ui + testing:
-# if(EXISTS "${PSXRECOMP_ROOT}/lib/recomp-net/CMakeLists.txt")
-#     set(PSX_NETPLAY ON CACHE BOOL "…" FORCE)
-# endif()
+# This title exposes the shared launcher, setup workflow, and 1v1 netplay.
+# Set before runtime.cmake so recomp-net and the lobby client are real targets.
+set(PSX_NETPLAY ON CACHE BOOL "Enable Battle Arena Toshinden netplay" FORCE)
 set(PSX_SETUP_WIZARD ON CACHE BOOL
     "Advertise first-run setup wizard + Generate & rebuild in recomp-ui" FORCE)
 include("${PSXRECOMP_ROOT}/runtime/runtime.cmake")
@@ -28,8 +22,8 @@ file(GLOB TOSHINDEN_MOD_PLUGIN_SOURCES CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mods/*.c")
 
 psxrecomp_add_game_runtime(psx-runtime
-    # ENABLE_NETPLAY_IF_PRESENT
-    # NETPLAY_LOBBY_URL "ws://netplay.retcomm.net:8765"
+    ENABLE_NETPLAY_IF_PRESENT
+    NETPLAY_LOBBY_URL "ws://netplay.retcomm.net:8765"
     ENABLE_SETUP_WIZARD
     WINDOW_TITLE "BattleArenaToshinden Recompiled"
     DEFAULT_GAME_CONFIG_PATH "game.toml"
@@ -45,7 +39,7 @@ psxrecomp_add_game_runtime(psx-runtime
 target_sources(psx-runtime PRIVATE ${TOSHINDEN_MOD_PLUGIN_SOURCES})
 
 # Stage runtime configs next to the exe for direct build/ launches. Only copy
-# files that exist — never fail POST_BUILD when game_options.toml is absent.
+# files that exist; never fail POST_BUILD when game_options.toml is absent.
 foreach(_PSX_RUNTIME_CONFIG game.toml game_options.toml)
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_PSX_RUNTIME_CONFIG}")
         add_custom_command(TARGET psx-runtime POST_BUILD

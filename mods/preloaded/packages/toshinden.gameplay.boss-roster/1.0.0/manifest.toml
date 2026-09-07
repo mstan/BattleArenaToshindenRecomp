@@ -1,9 +1,9 @@
 format_version = 5
 id = "toshinden.gameplay.boss-roster"
 version = "1.0.0"
-name = "Battle Arena Toshinden Boss Roster"
+name = "Battle Arena Toshinden Extra Roster"
 author = "mstan"
-description = "Adds an optional central boss column with Gaia and Sho on the character-select screen. Up/Down switches regular/boss selection, Left/Right chooses Gaia or Sho, and confirm uses the normal selection path."
+description = "Adds Gaia and Sho as extra character-select rows. Up cycles roster/Sho/Gaia/roster, Down cycles roster/Gaia/Sho/roster, Left/Right stays on the regular roster, and confirm uses the normal selection path."
 resolver = "declarative"
 save_compatibility = "shared"
 
@@ -13,8 +13,8 @@ exe_sha256 = "928c495ca0e9221d034085e17a79e81789738b0c389898c1d5f2384f51330f66"
 
 [[feature]]
 id = "boss-roster"
-name = "Boss Roster"
-description = "Enable the visible Gaia/Sho boss column. Up/Down switches between the regular roster and boss column, Left/Right chooses Gaia or Sho, and confirm uses the normal selection path."
+name = "Extra Roster"
+description = "Enable the visible Gaia/Sho extra rows. Up cycles roster/Sho/Gaia/roster, Down cycles roster/Gaia/Sho/roster, Left/Right stays on the regular roster, and confirm uses the normal selection path."
 group = "Gameplay"
 default_enabled = false
 
