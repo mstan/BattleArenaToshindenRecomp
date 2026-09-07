@@ -208,13 +208,23 @@ static int toshinden_packet_extent(uint32_t packet, uint8_t op,
     return 0;
 }
 
-static int32_t toshinden_anchor_for_packet(int32_t min_x, int32_t max_x,
+static int32_t toshinden_anchor_for_packet(uint32_t packet,
+                                           int32_t min_x, int32_t max_x,
                                            int32_t min_y,
                                            uint32_t display_width) {
     int32_t center = (int32_t)display_width / 2;
     int32_t packet_center = (min_x + max_x) / 2;
+    uint32_t role = (packet - TOSHINDEN_BATTLE_UI_BASE) %
+                    TOSHINDEN_BATTLE_UI_STRIDE;
 
     if (min_y >= TOSHINDEN_MENU_TEXT_Y_MIN)
+        return center;
+    /* 80181F48/50 initialize the large overlay font pools at bank+0x1428.
+     * DEMONSTRATION is emitted there at y=32..48, above the usual menu band.
+     * Keep its glyphs together. Timer/win-marker quads are separate earlier
+     * allocations; glyph size alone cannot distinguish the win markers. */
+    if (toshinden_is_battle_ui_packet(packet) &&
+        role >= 0x1428u && role < 0x1428u + 0x140u * 0x28u)
         return center;
     if (packet_center < center - TOSHINDEN_CENTER_DEADZONE)
         return 0;
@@ -287,7 +297,7 @@ static void toshinden_tag_packet_commands(uint32_t packet,
                                     &min_x, &max_x, &min_y, &max_y) &&
             toshinden_should_tag_packet(command_packet, min_y, max_y)) {
             int32_t anchor = toshinden_anchor_for_packet(
-                min_x, max_x, min_y, display_width);
+                command_packet, min_x, max_x, min_y, display_width);
             if (toshinden_is_options_packet(command_packet))
                 anchor = (int32_t)display_width / 2;
             gpu_ws_tag_screen_prim(command_packet, anchor);

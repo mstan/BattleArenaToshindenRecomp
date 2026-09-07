@@ -60,3 +60,14 @@ Retail BIOS is optional for generation; the validation run used SCPH1001.
 These checks cover the display milestone. Boss selection and desperation-move
 mods are separate follow-up work. Captures, measurement scripts, RAM dumps,
 and process logs remain local and ignored.
+
+### Attract-mode lettering follow-up
+
+The user subsequently found that `DEMONSTRATION` split into three widely
+spaced groups. Its 13 large glyph quads occupy native y=32..48, within the
+player HUD's vertical band. The classifier now identifies the dedicated
+320-quad overlay font pool initialized at each UI bank's offset 0x1428 and
+centers those glyphs instead of assigning each letter a player-side anchor. Presented
+captures at 4:3, 21:9 and 32:9 confirmed one centered word of constant width;
+the normal fight HUD and pause panel were rechecked at 21:9. Health gauges
+still fill the available width; player labels and win markers remain at the edges.
