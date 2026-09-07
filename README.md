@@ -18,6 +18,10 @@ and [recomp-ui](https://github.com/mstan/recomp-ui).
 
 ## Status
 
+**0.1.0 — Initial Release** is believed to be stable based on gameplay testing
+and user validation, despite being an early release. Further testing and bug
+reports are welcome; the validation notes describe the remaining limits.
+
 The game boots through its introduction and character selection into combat.
 The initial playable baseline was validated and approved for enhancements on
 September 6, 2026. The launcher includes disc setup, settings, and a Mods page.

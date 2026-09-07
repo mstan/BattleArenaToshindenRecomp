@@ -724,7 +724,6 @@ static void toshinden_build_boss_ui(ToshindenUiBuilder *builder) {
     int p1_char = toshinden_player_char(TOSHINDEN_PLAYER_1);
     int p2_char = toshinden_player_char(TOSHINDEN_PLAYER_2);
     uint32_t heading = toshinden_rgb(248, 220, 96);
-    uint32_t hint = toshinden_rgb(184, 184, 200);
     uint32_t shadow = toshinden_rgb(0, 0, 0);
 
     toshinden_emit_big_portrait(builder, p1_char, 0);
@@ -742,9 +741,6 @@ static void toshinden_build_boss_ui(ToshindenUiBuilder *builder) {
         p1_char == TOSHINDEN_CHAR_SHO,
         p2_char == TOSHINDEN_CHAR_SHO);
 
-    toshinden_emit_rect(builder, 112, 224, 416, 13, shadow);
-    toshinden_emit_text(builder, 116, 228,
-        "UP/DOWN: ROW  LEFT/RIGHT: ROSTER", hint);
 }
 
 static void toshinden_finish_builder(ToshindenUiBuilder *builder) {
