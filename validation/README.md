@@ -338,3 +338,30 @@ run for this follow-up.
 - Windows Release build and focused portrait/framework regressions passed.
   This follow-up did not repeat Linux runtime or online sessions. Published
   0.1.1 release assets predate these changes.
+
+
+## 0.1.2 release checks, September 7, 2026
+
+This release includes the score, digital-control, native portrait preservation,
+Gaia/Sho alternate artwork, and mod-buffer save-state fixes described above.
+The user approved the final in-game appearance before packaging.
+
+- Windows Release package built with game version 0.1.2 and debug tools off.
+  Checked the actual ZIP: eight bundled packages, Extra Roster 1.0.1, digital
+  mode locked, and Multitap disabled. Only system DLL imports are required;
+  package checks exclude disc files, retail BIOS, saves, and local settings.
+- A fresh Windows extraction using bundled OpenBIOS reached character selection
+  with clean native portraits. The release-specific game.toml now includes the
+  same controller lock as development builds.
+- Linux x86_64 AppImage built and passed layout/data-seeding tests, including
+  preservation of existing input mappings. Its payload contains version 0.1.2,
+  eight mods, Extra Roster 1.0.1, and locked digital controls without Multitap.
+  A 20-second WSL offscreen smoke initialized bundled OpenBIOS, the USA disc,
+  and Mesa OpenGL. This Linux package uses OpenGL; Vulkan headers were absent
+  from its build environment. Both builds retained the existing BIOS-source
+  fingerprint warning and used the already-tested generated BIOS backend.
+- A bounded GPT-5.5 review found no omissions in source inclusion, mod staging,
+  controller configuration, version stamping, or the pinned save-state fix.
+
+The focused portrait and save-state checks above remain the validation scope;
+this release does not claim an additional exhaustive online or Linux playthrough.

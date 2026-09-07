@@ -45,6 +45,7 @@ aspect_ratio = "4:3"
 
 [controller]
 default_mode = "digital"
+lock_mode = true
 # Two standard digital controller ports; no Multitap extension.
 multitap_analog = false
 

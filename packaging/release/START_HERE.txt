@@ -1,4 +1,4 @@
-Battle Arena Toshinden Recompiled 0.1.1
+Battle Arena Toshinden Recompiled 0.1.2
 
 Believed to be stable based on gameplay testing and user validation,
 despite being an early release. Bug reports are welcome.

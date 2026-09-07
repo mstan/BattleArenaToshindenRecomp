@@ -1,28 +1,23 @@
-# 0.1.1 - Online Extra Roster
+# 0.1.2 - Alternate Portraits and Visual Fixes
 
-Gaia and Sho can now be selected in online matches. The host chooses Extra
-Roster from the lobby's Mods page; guests see the required mod in View Mods
-and receive the host's selection automatically when the match launches.
+- Added distinct alternate portraits for Gaia and Sho, with opposite-facing
+  poses and colors matching their original alternate costumes. Press Select
+  (Right Shift on keyboard) to switch. Both players choose independently.
+- Fixed Extra Roster corrupting the original fighters' alternate portraits.
+- Fixed split player scores in adaptive ultrawide views.
+- Locked controller mode to the game's supported digital D-pad protocol while
+  retaining physical controller selection.
+- Fixed save-state restoration of mod GPU command buffers. Older states that
+  lack the required mod buffers are rejected safely.
+- Refreshed the README and restored the community Discord badge.
 
-- Added online mod-plan exchange, installed-version checks, and matching
-  plan fingerprints. Guest offline mod settings remain saved separately.
-- Verified the online lobby flow, Gaia/Sho selection, and combat through the
-  public relay with independently controlled players.
-- Removed the EXTRA heading and the small GAIA/SHO icon captions. Character
-  names beneath the large portraits remain.
-- Made extra-row navigation and selection highlights deterministic when
-  game state is restored. Returning to the regular row selects Eiji for P1
-  and Kayin for P2.
-- Corrected the guest lobby summary to show the host's mod selection.
+Includes Windows x64 ZIP and Linux x86_64 AppImage builds. This early release
+is believed to be stable based on gameplay testing and user validation.
 
-Windows x64 ZIP and Linux x86_64 AppImage are included. The game is believed
-to be stable based on gameplay testing and user validation despite its early
-version. Online testing is functional, not exhaustive; see the validation
-notes for scope and known limits. Automatic mod downloads and resource-backed
-online mods are not supported. LAN / Direct IP sessions run without mods.
+Two-player netplay and online Extra Roster remain supported. Both players
+should update to 0.1.2; Extra Roster now identifies itself as package 1.0.1.
+LAN / Direct IP sessions run without mods. See validation/README.md for scope.
 
-This release replaces 0.1.0, which has been hidden as a draft.
-
-Provide your own USA 14-track BIN/CUE disc image. No disc data or retail BIOS
-is included; MIT-licensed OpenBIOS is bundled. Linux requires glibc 2.38 or
-newer. See README.md for setup instructions.
+Provide your own USA 14-track BIN/CUE disc image. MIT-licensed OpenBIOS is
+bundled; no disc data or retail BIOS is included. Linux requires glibc 2.38
+or newer. See README.md for setup instructions.

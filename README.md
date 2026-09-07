@@ -12,7 +12,7 @@ and [recomp-ui](https://github.com/mstan/recomp-ui).
 
 ## Status
 
-**0.1.1** is believed to be stable despite being an early release.
+**0.1.2** is believed to be stable despite being an early release.
 Bug reports are welcome; see
 [validation notes](validation/README.md) for the tested build and scope.
 
