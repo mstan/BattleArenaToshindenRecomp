@@ -184,3 +184,68 @@ add framework save-state serialization or reserve bytes in retail game structs.
 - Native release scripts share root `VERSION` and use the framework's mod
   staging helpers. The generic setup-host workflow remains manual so a native
   release tag does not publish competing setup-only downloads.
+
+
+## 0.1.1 online Extra Roster and selector cleanup, September 7, 2026
+
+- Forward-ported the shared online mod-plan backend into the title's pinned
+  framework. The host publishes required package versions, enabled features,
+  options, and a matching plan fingerprint. Guests advertise installed packages
+  even when their offline features are disabled. Missing fingerprints, unknown
+  features/options, and resource-backed plans fail before game launch.
+- Two isolated Windows clients joined a password-protected room through
+  `ws://netplay.retcomm.net:8765`. Both launched with `force_input_relay=1`,
+  slots 0/1, and public relay `netplay.retcomm.net:8777`. Match traffic used
+  the public server; both test clients themselves ran on one computer.
+- The host enabled Extra Roster; the guest started with no saved mod selection.
+  The guest's View Mods showed the host-required package as installed. Guest
+  offline state remained absent after the session, confirming it was not saved.
+- Independent player input selected Gaia (8) for P1 and Sho (9) for P2 on both
+  clients. Left/Right retained the extra selections; confirm plus direction
+  entered Gaia versus Sho. Both clients rendered the revised selector and combat.
+- Combat inputs reached the corresponding player on both peers. Of 18 timed
+  pad samples, 17 showed the current held input and one showed the preceding
+  input on both peers during correction. This is functional input coverage,
+  not a guarantee of fixed network input latency.
+- The completed match run produced 416 shared sampled core-state digests
+  through simulation tick 13280; all matched. A transient prediction divergence
+  occurred and the run continued.
+- Removed the EXTRA heading/background and small GAIA/SHO icon captions;
+  preserved large portrait names and player badges. Refreshed the README image
+  from the actual online selector. No navigation hint remains.
+- Removed host-only remembered roster positions and saved highlight colors.
+  Selector and highlight regression harnesses passed including RAM restoration
+  after a divergent host timeline. Returning to the regular row now consistently
+  selects Eiji for P1 and Kayin for P2. This supersedes the earlier remembered
+  return-slot save-state limitation documented above.
+- Fixed the guest lobby summary to read the host's plan instead of the guest's
+  offline selection. The launcher source built successfully on Windows/Linux.
+
+An earlier attempt to skip the opening movie exposed a shared rollback-engine
+failure: abort realignment removed a ring snapshot while a pinned copy survived;
+media-keyframe retry ignored that copy and eventually returned to the lobby.
+The included focused fix makes payload lookup, CRC probing, and sealing use the
+matching pinned baseline. Its regression passed for evicted ring snapshots,
+matching/wrong ticks, and preserving the pinned payload. The original live
+movie-skip failure was not re-exercised after this fix. Adverse-network recovery
+and independent remote networks have not been exhaustively tested.
+
+Release acceptance is the working online lobby/mod UI and functional Gaia/Sho
+selection/combat, as requested. Automatic mod transfer is not implemented in
+this focused backend port; its download UI is disabled. Resource-backed online
+mods are explicitly unsupported. LAN / Direct IP retains vanilla sessions.
+
+
+## 0.1.1 package checks
+
+- Windows and Linux Release builds passed with debug tools disabled and game
+  version 0.1.1. Both contain the four title mods and four framework packages.
+- Windows ZIP checks passed for system-only DLL imports, clean defaults, and
+  exclusion of discs, retail BIOS files, saves, and developer mod selections.
+  A fresh extraction booted with bundled OpenBIOS to the character selector.
+- Linux AppImage layout and data-seeding tests passed for version 0.1.1,
+  including preservation of an existing input mapping. The actual AppImage ran
+  for 20 seconds using bundled OpenBIOS and Mesa offscreen OpenGL under WSL;
+  BIOS, disc, and GPU initialization passed. This was a startup smoke, not a
+  full Linux playthrough. The smoke script's initial case-sensitive BIOS label
+  check was corrected to accept the runtime's uppercase OPENBIOS label.

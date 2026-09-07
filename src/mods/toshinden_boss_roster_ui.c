@@ -60,8 +60,6 @@
 
 static int s_boss_ui_enabled;
 static uint32_t s_dma_buffers[2];
-static uint32_t s_saved_hilite_command[2][8];
-static uint8_t s_hilite_saved[2][8];
 
 extern void toshinden_boss_portraits_prepare(void);
 
@@ -321,25 +319,12 @@ static void toshinden_unlink_native_com_label(uint32_t head, int bank) {
         toshinden_unlink_ot_packet(head, packet_b);
 }
 
-static void toshinden_save_hilite_command(int bank, uint32_t slot,
-                                          uint32_t packet) {
-    if (!s_hilite_saved[bank][slot]) {
-        s_saved_hilite_command[bank][slot] = psx_mod_read_word(packet + 4u);
-        s_hilite_saved[bank][slot] = 1;
-    }
+static void toshinden_restore_native_hilite_if_dimmed(uint32_t packet) {
+    if (psx_mod_read_word(packet + 4u) == 0x2C646464u)
+        psx_mod_write_word(packet + 4u, 0x2C808080u);
 }
 
-static void toshinden_restore_hilite_command(int bank, uint32_t slot,
-                                             uint32_t packet) {
-    if (s_hilite_saved[bank][slot]) {
-        psx_mod_write_word(packet + 4u, s_saved_hilite_command[bank][slot]);
-        s_hilite_saved[bank][slot] = 0;
-    }
-}
-
-static void toshinden_dim_native_hilite(uint32_t packet, int bank,
-                                        uint32_t slot) {
-    toshinden_save_hilite_command(bank, slot, packet);
+static void toshinden_dim_native_hilite(uint32_t packet) {
     psx_mod_write_word(packet + 4u, 0x2C646464u);
 }
 
@@ -372,7 +357,7 @@ static void toshinden_suppress_native_boss_cursor(uint32_t head, int bank,
         uint32_t slot = (uint32_t)toshinden_wrapped_normal_char(p1_char);
         toshinden_dim_native_hilite(
             TOSHINDEN_NATIVE_HILITE_0_BASE + bank_offset +
-            (slot * TOSHINDEN_NATIVE_HILITE_STRIDE), bank, slot);
+            (slot * TOSHINDEN_NATIVE_HILITE_STRIDE));
     }
 
     if (p2_boss && !(toshinden_is_normal_char(p1_char) &&
@@ -381,7 +366,7 @@ static void toshinden_suppress_native_boss_cursor(uint32_t head, int bank,
         uint32_t slot = (uint32_t)toshinden_wrapped_normal_char(p2_char);
         toshinden_dim_native_hilite(
             TOSHINDEN_NATIVE_HILITE_0_BASE + bank_offset +
-            (slot * TOSHINDEN_NATIVE_HILITE_STRIDE), bank, slot);
+            (slot * TOSHINDEN_NATIVE_HILITE_STRIDE));
     }
 }
 
@@ -390,7 +375,7 @@ static void toshinden_restore_native_hilites(int bank) {
     uint32_t slot;
 
     for (slot = 0; slot < TOSHINDEN_NATIVE_THUMBNAIL_COUNT; slot++) {
-        toshinden_restore_hilite_command(bank, slot,
+        toshinden_restore_native_hilite_if_dimmed(
             TOSHINDEN_NATIVE_HILITE_0_BASE + bank_offset +
             (slot * TOSHINDEN_NATIVE_HILITE_STRIDE));
     }
@@ -680,16 +665,13 @@ static void toshinden_emit_player_badge(ToshindenUiBuilder *builder,
 static void toshinden_emit_boss_card(ToshindenUiBuilder *builder,
                                      int char_id,
                                      int32_t y,
-                                     const char *name,
                                      int p1_selected,
                                      int p2_selected) {
     uint32_t dim = toshinden_rgb(24, 24, 32);
     uint32_t panel = toshinden_rgb(0, 0, 0);
     uint32_t border = toshinden_rgb(136, 136, 152);
-    uint32_t white = toshinden_rgb(224, 224, 224);
     uint32_t p1 = toshinden_rgb(248, 64, 48);
     uint32_t p2 = toshinden_rgb(80, 128, 255);
-    int32_t name_x = char_id == TOSHINDEN_CHAR_GAIA ? 296 : 302;
 
     toshinden_emit_rect(builder, TOSHINDEN_CARD_X - 2, y - 2,
         TOSHINDEN_CARD_W + 4, TOSHINDEN_CARD_H + 4, dim);
@@ -716,28 +698,21 @@ static void toshinden_emit_boss_card(ToshindenUiBuilder *builder,
             (toshinden_player_is_cpu(TOSHINDEN_PLAYER_2) ? 41 : 29),
             y + 3, p2);
 
-    toshinden_emit_text(builder, name_x, y + TOSHINDEN_CARD_H + 3,
-        name, white);
 }
 
 static void toshinden_build_boss_ui(ToshindenUiBuilder *builder) {
     int p1_char = toshinden_player_char(TOSHINDEN_PLAYER_1);
     int p2_char = toshinden_player_char(TOSHINDEN_PLAYER_2);
-    uint32_t heading = toshinden_rgb(248, 220, 96);
-    uint32_t shadow = toshinden_rgb(0, 0, 0);
 
     toshinden_emit_big_portrait(builder, p1_char, 0);
     toshinden_emit_big_portrait(builder, p2_char, 1);
 
-    toshinden_emit_rect(builder, 282, 50, 76, 16, shadow);
-    toshinden_emit_text(builder, 290, 54, "EXTRA", heading);
-
     toshinden_emit_boss_card(builder, TOSHINDEN_CHAR_GAIA,
-        TOSHINDEN_GAIA_Y, "GAIA",
+        TOSHINDEN_GAIA_Y,
         p1_char == TOSHINDEN_CHAR_GAIA,
         p2_char == TOSHINDEN_CHAR_GAIA);
     toshinden_emit_boss_card(builder, TOSHINDEN_CHAR_SHO,
-        TOSHINDEN_SHO_Y, "SHO",
+        TOSHINDEN_SHO_Y,
         p1_char == TOSHINDEN_CHAR_SHO,
         p2_char == TOSHINDEN_CHAR_SHO);
 

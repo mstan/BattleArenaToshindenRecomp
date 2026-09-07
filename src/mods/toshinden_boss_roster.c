@@ -26,7 +26,6 @@
 #define TOSHINDEN_INPUT_DIRECTIONAL    (TOSHINDEN_INPUT_PAGE | TOSHINDEN_INPUT_LR)
 
 static int s_boss_roster_enabled;
-static int16_t s_previous_normal_char[2] = { 0, 1 };
 
 static int toshinden_player_index(uint32_t player) {
     if (player == TOSHINDEN_PLAYER_1)
@@ -42,10 +41,6 @@ static uint32_t toshinden_other_player(uint32_t player) {
     if (player == TOSHINDEN_PLAYER_2)
         return TOSHINDEN_PLAYER_1;
     return 0;
-}
-
-static int toshinden_is_normal_char(int32_t char_id) {
-    return char_id >= 0 && char_id <= TOSHINDEN_CHAR_NORMAL_MAX;
 }
 
 static int toshinden_is_boss_char(int32_t char_id) {
@@ -82,11 +77,7 @@ static void toshinden_suppress_directional_input(CPUState *cpu) {
 }
 
 static void toshinden_enter_extra_row(CPUState *cpu, uint32_t player,
-                                      int index, int16_t current_char,
                                       int16_t extra_char) {
-    if (toshinden_is_normal_char(current_char))
-        s_previous_normal_char[index] = current_char;
-
     toshinden_set_char(player, extra_char);
     psx_mod_write_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET, 0);
     toshinden_suppress_directional_input(cpu);
@@ -94,10 +85,7 @@ static void toshinden_enter_extra_row(CPUState *cpu, uint32_t player,
 
 static void toshinden_leave_extra_row(CPUState *cpu, uint32_t player,
                                       int index) {
-    int16_t restore = s_previous_normal_char[index];
-
-    if (!toshinden_is_normal_char(restore))
-        restore = index == 0 ? 0 : 1;
+    int16_t restore = index == 0 ? 0 : 1;
 
     toshinden_set_char(player, restore);
     psx_mod_write_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET, 0);
@@ -149,9 +137,6 @@ static void toshinden_boss_select_helper_entry(CPUState *cpu,
         return;
 
     current_char = (int16_t)psx_mod_read_half(player + TOSHINDEN_PLAYER_CHAR_OFFSET);
-    if (toshinden_is_normal_char(current_char))
-        s_previous_normal_char[index] = current_char;
-
     input = (uint16_t)cpu->gpr[6];
 
     if ((input & TOSHINDEN_INPUT_CONFIRM) != 0u) {
@@ -165,11 +150,9 @@ static void toshinden_boss_select_helper_entry(CPUState *cpu,
 
     if (!toshinden_is_boss_char(current_char)) {
         if ((input & TOSHINDEN_INPUT_UP) != 0u)
-            toshinden_enter_extra_row(cpu, player, index, current_char,
-                TOSHINDEN_CHAR_SHO);
+            toshinden_enter_extra_row(cpu, player, TOSHINDEN_CHAR_SHO);
         else if ((input & TOSHINDEN_INPUT_DOWN) != 0u)
-            toshinden_enter_extra_row(cpu, player, index, current_char,
-                TOSHINDEN_CHAR_GAIA);
+            toshinden_enter_extra_row(cpu, player, TOSHINDEN_CHAR_GAIA);
         return;
     }
 

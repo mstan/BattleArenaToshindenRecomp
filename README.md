@@ -12,7 +12,7 @@ and [recomp-ui](https://github.com/mstan/recomp-ui).
 
 ## Status
 
-**0.1.0 — Initial Release** is believed to be stable based on gameplay testing
+**0.1.1** is believed to be stable based on gameplay testing
 and user validation, despite being an early release. Further testing and bug
 reports are welcome; the validation notes describe the remaining limits.
 
@@ -49,9 +49,9 @@ starts the match through the game's selection path. The package uses new
 generated portrait art; source details are documented in
 [portrait sources and generation prompts](assets/mods/boss-roster/SOURCE.md).
 
-![Gaia and Sho selectable in the EXTRA rows, above the original eight fighters](.github/screenshots/extra-roster.png)
+![Gaia and Sho selectable above the original eight fighters](.github/screenshots/extra-roster.png)
 
-*Gaia and Sho in the EXTRA column, with original-game-inspired mod portraits.
+*Gaia and Sho in the extra selection rows, with original-game-inspired mod portraits.
 Up/Down moves between rows; Left/Right moves within the regular roster only.*
 
 **Battle Arena Toshinden Desperation at Any Health** lets players perform
@@ -129,14 +129,21 @@ or use LAN / Direct IP. Each player configures their local controller under
 to join. Two standard digital controller ports are used; Multitap is disabled.
 
 Both players need the same game build and the verified USA 14-track disc image.
-Netplay runs a vanilla session: the framework disables mods, including the
-widescreen, Extra Roster, frame blending, and desperation packages.
+Online rooms support the bundled **Extra Roster** mod: the host selects it with
+the room's **Mods** button, and the guest can inspect the required selection with
+**View Mods**. Both players can choose Gaia and Sho. The host's mod plan applies
+to the session automatically; the guest's saved offline selection is preserved.
+Required package versions and the resolved mod plan must match before launch.
+Automatic mod downloads and resource-backed mods are not supported in this build.
+LAN / Direct IP sessions retain the vanilla mod policy.
 
-Validation covered two local peers in rollback mode, independent P1/P2 input,
-character selection, and combat. All 416 sampled core-state hashes matched,
-with no reported desyncs. Internet latency and NAT traversal have not yet been
-tested for this title. See the [netplay guide](psxrecomp/docs/NETPLAY.md) for
-connection options and the [validation notes](validation/README.md) for scope.
+Validation covered a password-protected online room through the public relay,
+host-to-guest mod selection, and Gaia versus Sho selection and combat using
+independent player inputs. Both test clients ran on one computer while their
+match traffic used the public server. This is a functional online check, not
+exhaustive testing of different networks or adverse connection conditions.
+See the [netplay guide](psxrecomp/docs/NETPLAY.md) for connection options and the
+[validation notes](validation/README.md) for the tested scope and known limits.
 
 ## License
 

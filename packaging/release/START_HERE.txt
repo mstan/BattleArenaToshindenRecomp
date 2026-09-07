@@ -1,4 +1,4 @@
-Battle Arena Toshinden Recompiled 0.1.0 - Initial Release
+Battle Arena Toshinden Recompiled 0.1.1
 
 Believed to be stable based on gameplay testing and user validation,
 despite being an early release. Bug reports are welcome.
@@ -13,9 +13,10 @@ despite being an early release. Bug reports are welcome.
    Configure your local controller under PLAYER 1 / NETPLAY. In the game,
    choose VS HUMAN or have P2 press Start. Multitap is not used.
 
-Netplay runs vanilla: all mods are disabled for the session. Two local peers
-passed rollback input and state-sync checks; internet matches are not yet
-validated. See README.md for tested scope and enhancement controls.
+Online hosts can select Extra Roster in the lobby's Mods page. Guests use
+View Mods to inspect the host's selection; it applies automatically when
+the match starts. Gaia and Sho were checked in an online relay session.
+LAN / Direct IP sessions run without mods. See README.md for tested scope.
 
 On Windows, keep the package together in a writable folder. Your settings
 and saves are local. On Linux, the AppImage creates a writable user data
