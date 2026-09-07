@@ -276,3 +276,39 @@ mods are explicitly unsupported. LAN / Direct IP retains vanilla sessions.
 
 These checks cover the source update and local Windows build. The published
 0.1.1 packages predate this score fix.
+
+
+## Post-0.1.1 digital controls and alternate portraits, September 7, 2026
+
+- Locked Toshinden to its native digital controller protocol with the existing
+  `game.toml` controller lock. The launcher hides analog-mode selection while
+  retaining physical controller selection. An isolated launcher with a connected
+  DualSense and stale `p1_mode="analog"` showed digital pad art and no mode
+  selector. Runtime pad status reported both ports digital; Multitap stays off.
+- Fixed Extra Roster overwriting native alternate portrait textures. The mod
+  now appends GPU upload/draw/restore commands after native selector drawing,
+  restoring both complete 128x128 regions and the texture-window/mask state.
+  Native transfer commands cause the mod to skip that frame, and packet-buffer
+  overflow fails closed. Disc assets and the shared framework are unchanged.
+- Compared all eight regular characters in both normal and alternate states:
+  all 16 portrait interiors matched clean mod-disabled captures pixel for pixel.
+  Verified both complete borrowed VRAM regions equal the original texture data.
+  The final binary also passed a native pause-menu Reset, return to character
+  select, and alternate portrait check without a state load on that return.
+- Confirmed Gaia and Sho portraits/cards render and their explicit alternate
+  choices survive confirmation against different CPU opponents. Both entered
+  combat. Captures show blue-armored Gaia and Sho with reddish hair and orange
+  clothing in their native alternate costumes. The mod still has one portrait
+  per extra character; matching alternate artwork is a separate follow-up.
+- Windows Release build passed. Focused tests use production mod code:
+  `tests/test_portrait_uploads.c` covers GPU stream order, masked native pixels,
+  exact restoration, environment state, transfer rejection, and buffer failure;
+  `tests/test_extra_roster.c` covers both players' explicit costume choices and
+  automatic mirror colors. The existing widescreen score regression and shared
+  launcher pad-mode resolution guard also passed.
+
+Compile either title regression with
+`clang -std=c99 -Wall -Wextra -Werror -Itests/stubs -I. tests/<test>.c -o validation/<test>.exe`
+and run the result. These fixes are validated in the local Windows build;
+0.1.1 release assets predate them. No new online or Linux runtime session was
+run for this follow-up.

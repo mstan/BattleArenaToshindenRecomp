@@ -12,6 +12,11 @@
 #define TOSHINDEN_PLAYER_FLAGS_OFFSET  0x40u
 #define TOSHINDEN_PLAYER_PAIR_OFFSET   0x34u
 
+#define TOSHINDEN_PLAYER_FLAG_ALT_COLOR    0x0001u
+#define TOSHINDEN_PLAYER_FLAG_ALT_EXPLICIT 0x0002u
+#define TOSHINDEN_PLAYER_FLAG_ALT_MASK     \
+    (TOSHINDEN_PLAYER_FLAG_ALT_COLOR | TOSHINDEN_PLAYER_FLAG_ALT_EXPLICIT)
+
 #define TOSHINDEN_CHAR_NORMAL_MAX      7
 #define TOSHINDEN_CHAR_GAIA            8
 #define TOSHINDEN_CHAR_SHO             9
@@ -59,15 +64,21 @@ static void toshinden_set_pair_flag_for_match(uint32_t player, int16_t char_id) 
     if (pair != expected_pair)
         return;
 
+    flags = psx_mod_read_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET);
+    if ((flags & TOSHINDEN_PLAYER_FLAG_ALT_EXPLICIT) != 0u)
+        return;
+
     if ((int16_t)psx_mod_read_half(pair + TOSHINDEN_PLAYER_CHAR_OFFSET) != char_id) {
-        psx_mod_write_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET, 0);
+        psx_mod_write_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET,
+                           (uint16_t)(flags & ~TOSHINDEN_PLAYER_FLAG_ALT_MASK));
         return;
     }
 
-    flags = psx_mod_read_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET);
-    if ((flags & 2u) == 0u) {
+    {
         uint16_t pair_flags = psx_mod_read_half(pair + TOSHINDEN_PLAYER_FLAGS_OFFSET);
-        flags = (uint16_t)((pair_flags ^ 1u) & 1u);
+        flags = (uint16_t)((flags & ~TOSHINDEN_PLAYER_FLAG_ALT_MASK) |
+                           ((pair_flags ^ TOSHINDEN_PLAYER_FLAG_ALT_COLOR) &
+                            TOSHINDEN_PLAYER_FLAG_ALT_COLOR));
         psx_mod_write_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET, flags);
     }
 }

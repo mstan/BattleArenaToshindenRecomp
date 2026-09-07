@@ -81,6 +81,10 @@ Enable enhancements on the launcher's **Mods** page. The title's widescreen,
 frame blending, and optional gameplay packages are disabled by default. Saves and
 mod selections are local to the installation.
 
+Controllers use digital D-pad mode automatically. Select your connected
+controller in the launcher; press **Select** on the character screen to choose
+an alternate costume.
+
 ## Layout
 
 - `iso/` - local disc image and audio tracks, ignored by Git.

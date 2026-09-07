@@ -17,7 +17,7 @@
 #define TOSHINDEN_OT_HEAD_0              0x801F25C0u
 #define TOSHINDEN_OT_HEAD_1              0x801F4ED0u
 
-#define TOSHINDEN_UI_DMA_BUFFER_SIZE     (32u * 1024u)
+#define TOSHINDEN_UI_DMA_BUFFER_SIZE     (192u * 1024u)
 #define TOSHINDEN_UI_MAX_OT_WALK         8192u
 #define TOSHINDEN_UI_LINK_END            0x00FFFFFFu
 
@@ -50,6 +50,12 @@
 #define TOSHINDEN_NATIVE_THUMBNAIL_Y     190u
 #define TOSHINDEN_NATIVE_THUMBNAIL_BOT_Y 224u
 
+#define TOSHINDEN_BOSS_PORTRAIT_W        128u
+#define TOSHINDEN_BOSS_PORTRAIT_H        128u
+#define TOSHINDEN_GAIA_VRAM_X            640u
+#define TOSHINDEN_GAIA_VRAM_Y            128u
+#define TOSHINDEN_SHO_VRAM_X             768u
+#define TOSHINDEN_SHO_VRAM_Y             128u
 #define TOSHINDEN_GAIA_TPAGE             0x010Au
 #define TOSHINDEN_SHO_TPAGE              0x010Cu
 #define TOSHINDEN_BOSS_PORTRAIT_CLUT     0x0000u
@@ -61,7 +67,10 @@
 static int s_boss_ui_enabled;
 static uint32_t s_dma_buffers[2];
 
-extern void toshinden_boss_portraits_prepare(void);
+extern void toshinden_boss_portraits_snapshot_native(int gaia_x, int gaia_y, int sho_x, int sho_y);
+extern int toshinden_boss_portraits_restore_valid(void);
+extern const uint16_t *toshinden_boss_portrait_pixels(int char_id);
+extern const uint16_t *toshinden_boss_portrait_restore_pixels(int char_id);
 
 typedef struct ToshindenUiBuilder {
     uint32_t base;
@@ -70,6 +79,7 @@ typedef struct ToshindenUiBuilder {
     uint32_t first;
     uint32_t previous;
     uint32_t previous_word_count;
+    int failed;
 } ToshindenUiBuilder;
 
 typedef struct ToshindenBossPortraitDescriptor {
@@ -206,6 +216,86 @@ static int toshinden_ot_contains_select_thumbnails(uint32_t head, int bank) {
                 toshinden_is_native_thumbnail_packet(packet))
                 found |= 1u << thumb;
         }
+
+        node = 0x80000000u | next;
+    }
+
+    return 0;
+}
+
+static int toshinden_gp0_fixed_word_count(uint32_t word) {
+    uint32_t op = word >> 24;
+
+    if (op <= 0x1Fu)
+        return op == 0x02u ? 3 : 1;
+
+    if (op >= 0x20u && op <= 0x23u) return 4;
+    if (op >= 0x24u && op <= 0x27u) return 7;
+    if (op >= 0x28u && op <= 0x2Bu) return 5;
+    if (op >= 0x2Cu && op <= 0x2Fu) return 9;
+    if (op >= 0x30u && op <= 0x33u) return 6;
+    if (op >= 0x34u && op <= 0x37u) return 9;
+    if (op >= 0x38u && op <= 0x3Bu) return 8;
+    if (op >= 0x3Cu && op <= 0x3Fu) return 12;
+
+    if (op >= 0x40u && op <= 0x47u) return 3;
+    if (op >= 0x48u && op <= 0x4Fu) return -1;
+    if (op >= 0x50u && op <= 0x57u) return 4;
+    if (op >= 0x58u && op <= 0x5Fu) return -1;
+
+    if (op >= 0x60u && op <= 0x63u) return 3;
+    if (op >= 0x64u && op <= 0x67u) return 4;
+    if (op >= 0x68u && op <= 0x6Bu) return 2;
+    if (op >= 0x6Cu && op <= 0x6Fu) return 3;
+    if (op >= 0x70u && op <= 0x73u) return 2;
+    if (op >= 0x74u && op <= 0x77u) return 3;
+    if (op >= 0x78u && op <= 0x7Bu) return 2;
+    if (op >= 0x7Cu && op <= 0x7Fu) return 3;
+
+    if (op >= 0x80u && op <= 0xDFu)
+        return -2;
+
+    return 1;
+}
+
+static int toshinden_ot_is_safe_for_transient_vram(uint32_t head,
+                                                   uint32_t *out_e2,
+                                                   uint32_t *out_e6) {
+    uint32_t node = head;
+    uint32_t i;
+
+    if (out_e2 != 0) *out_e2 = 0xE2000000u;
+    if (out_e6 != 0) *out_e6 = 0xE6000000u;
+
+    for (i = 0; i < TOSHINDEN_UI_MAX_OT_WALK; i++) {
+        uint32_t tag = psx_mod_read_word(node);
+        uint32_t next = tag & TOSHINDEN_UI_LINK_END;
+        uint32_t word_count = tag >> 24;
+        uint32_t word_index = 0;
+
+        while (word_index < word_count) {
+            uint32_t word = psx_mod_read_word(node + 4u + word_index * 4u);
+            int count = toshinden_gp0_fixed_word_count(word);
+
+            if (count < 0)
+                return 0;
+
+            if ((word_index + (uint32_t)count) > word_count)
+                return 0;
+
+            if ((word >> 24) == 0xE2u && out_e2 != 0)
+                *out_e2 = word;
+            if ((word >> 24) == 0xE6u && out_e6 != 0)
+                *out_e6 = word;
+
+            word_index += (uint32_t)count;
+        }
+
+        if (next == TOSHINDEN_UI_LINK_END)
+            return 1;
+
+        if ((next & 3u) != 0u)
+            return 0;
 
         node = 0x80000000u | next;
     }
@@ -389,6 +479,7 @@ static void toshinden_builder_init(ToshindenUiBuilder *builder,
     builder->first = 0;
     builder->previous = 0;
     builder->previous_word_count = 0;
+    builder->failed = 0;
 }
 
 static int toshinden_emit_words(ToshindenUiBuilder *builder,
@@ -397,11 +488,18 @@ static int toshinden_emit_words(ToshindenUiBuilder *builder,
     uint32_t packet;
     uint32_t i;
 
-    if (word_count == 0u || word_count > 255u)
+    if (builder->failed)
         return 0;
 
-    if ((builder->cursor + ((word_count + 1u) * 4u)) > builder->end)
+    if (word_count == 0u || word_count > 255u) {
+        builder->failed = 1;
         return 0;
+    }
+
+    if ((builder->cursor + ((word_count + 1u) * 4u)) > builder->end) {
+        builder->failed = 1;
+        return 0;
+    }
 
     packet = builder->cursor;
     builder->cursor += (word_count + 1u) * 4u;
@@ -422,6 +520,83 @@ static int toshinden_emit_words(ToshindenUiBuilder *builder,
         psx_mod_write_word(packet + 4u + (i * 4u), words[i]);
 
     return 1;
+}
+
+static int toshinden_emit_gpu_env(ToshindenUiBuilder *builder,
+                                  uint32_t command) {
+    uint32_t words[1];
+
+    words[0] = command;
+    return toshinden_emit_words(builder, words, 1u);
+}
+
+static int toshinden_emit_vram_upload(ToshindenUiBuilder *builder,
+                                      uint32_t x, uint32_t y,
+                                      uint32_t w, uint32_t h,
+                                      const uint16_t *pixels) {
+    uint32_t pixel_words;
+    uint32_t emitted_pixels = 0;
+    uint32_t words[255];
+
+    if (pixels == 0 || w == 0u || h == 0u)
+        return 0;
+
+    pixel_words = (w * h + 1u) / 2u;
+
+    while (emitted_pixels < pixel_words) {
+        uint32_t word_count = 0;
+        uint32_t capacity;
+        uint32_t i;
+
+        if (emitted_pixels == 0u) {
+            words[word_count++] = 0xE6000000u;
+            words[word_count++] = 0xA0000000u;
+            words[word_count++] = ((y & 0xFFFFu) << 16) | (x & 0xFFFFu);
+            words[word_count++] = ((h & 0xFFFFu) << 16) | (w & 0xFFFFu);
+        }
+
+        capacity = 255u - word_count;
+        if (capacity > (pixel_words - emitted_pixels))
+            capacity = pixel_words - emitted_pixels;
+
+        for (i = 0; i < capacity; i++) {
+            uint32_t pixel_index = (emitted_pixels + i) * 2u;
+            words[word_count++] = (uint32_t)pixels[pixel_index] |
+                ((uint32_t)pixels[pixel_index + 1u] << 16);
+        }
+
+        if (!toshinden_emit_words(builder, words, word_count))
+            return 0;
+
+        emitted_pixels += capacity;
+    }
+
+    return emitted_pixels == pixel_words;
+}
+
+static int toshinden_emit_boss_portrait_uploads(ToshindenUiBuilder *builder) {
+    return toshinden_emit_vram_upload(builder,
+        TOSHINDEN_GAIA_VRAM_X, TOSHINDEN_GAIA_VRAM_Y,
+        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
+        toshinden_boss_portrait_pixels(TOSHINDEN_CHAR_GAIA)) &&
+        toshinden_emit_vram_upload(builder,
+        TOSHINDEN_SHO_VRAM_X, TOSHINDEN_SHO_VRAM_Y,
+        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
+        toshinden_boss_portrait_pixels(TOSHINDEN_CHAR_SHO));
+}
+
+static int toshinden_emit_boss_portrait_restores(ToshindenUiBuilder *builder) {
+    if (!toshinden_boss_portraits_restore_valid())
+        return 0;
+
+    return toshinden_emit_vram_upload(builder,
+        TOSHINDEN_GAIA_VRAM_X, TOSHINDEN_GAIA_VRAM_Y,
+        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
+        toshinden_boss_portrait_restore_pixels(TOSHINDEN_CHAR_GAIA)) &&
+        toshinden_emit_vram_upload(builder,
+        TOSHINDEN_SHO_VRAM_X, TOSHINDEN_SHO_VRAM_Y,
+        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
+        toshinden_boss_portrait_restore_pixels(TOSHINDEN_CHAR_SHO));
 }
 
 static void toshinden_emit_rect(ToshindenUiBuilder *builder,
@@ -762,6 +937,8 @@ static void toshinden_boss_roster_ui_final_ot(CPUState *cpu,
     int p1_char;
     int p2_char;
     ToshindenUiBuilder builder;
+    uint32_t restore_e2;
+    uint32_t restore_e6;
 
     if (!s_boss_ui_enabled || address != TOSHINDEN_BOSS_UI_FINAL_OT)
         return;
@@ -780,15 +957,33 @@ static void toshinden_boss_roster_ui_final_ot(CPUState *cpu,
     if (!toshinden_ensure_dma_buffers())
         return;
 
+    if (!toshinden_ot_is_safe_for_transient_vram(head,
+        &restore_e2, &restore_e6))
+        return;
+
     p1_char = toshinden_player_char(TOSHINDEN_PLAYER_1);
     p2_char = toshinden_player_char(TOSHINDEN_PLAYER_2);
-    toshinden_boss_portraits_prepare();
+    toshinden_boss_portraits_snapshot_native(
+        (int)TOSHINDEN_GAIA_VRAM_X, (int)TOSHINDEN_GAIA_VRAM_Y,
+        (int)TOSHINDEN_SHO_VRAM_X, (int)TOSHINDEN_SHO_VRAM_Y);
     toshinden_restore_native_hilites(bank);
     toshinden_unlink_native_vs_logo(head, bank);
     toshinden_suppress_native_boss_cursor(head, bank, p1_char, p2_char);
 
     toshinden_builder_init(&builder, s_dma_buffers[bank]);
+    if (!toshinden_emit_boss_portrait_uploads(&builder))
+        return;
+    if (!toshinden_emit_gpu_env(&builder, 0xE2000000u))
+        return;
     toshinden_build_boss_ui(&builder);
+    if (!toshinden_emit_boss_portrait_restores(&builder))
+        return;
+    if (!toshinden_emit_gpu_env(&builder, restore_e6))
+        return;
+    if (!toshinden_emit_gpu_env(&builder, restore_e2))
+        return;
+    if (builder.failed)
+        return;
     toshinden_finish_builder(&builder);
     toshinden_append_ui_chain(head, builder.first);
 }
