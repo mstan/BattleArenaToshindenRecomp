@@ -36,12 +36,12 @@ int toshinden_boss_portraits_restore_valid(void) {
     return s_restore_valid;
 }
 
-const uint16_t *toshinden_boss_portrait_pixels(int char_id) {
+const uint16_t *toshinden_boss_portrait_pixels(int char_id, int alternate) {
     switch (char_id) {
     case 8:
-        return toshinden_gaia_portrait;
+        return alternate ? toshinden_gaia_alt_portrait : toshinden_gaia_portrait;
     case 9:
-        return toshinden_sho_portrait;
+        return alternate ? toshinden_sho_alt_portrait : toshinden_sho_portrait;
     default:
         return 0;
     }

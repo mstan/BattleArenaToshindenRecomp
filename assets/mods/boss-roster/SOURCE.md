@@ -39,6 +39,22 @@ Generate a NEW original square character-select portrait of SHO SHINJO matching 
 
 ## Encoding
 
-`tools/build_boss_portraits.py` encodes both sources as 128x128 RGB555 textures.
+`tools/build_boss_portraits.py` encodes all four sources as 128x128 RGB555 textures.
 The generated header is committed so ordinary builds do not require Pillow.
-The same textures supply the extra-row icons and large selection portraits.
+Default textures supply the extra-row icons. Large portraits use each player's
+normal or alternate costume choice.
+
+## Alternate portraits
+
+`gaia-alt.png` and `sho-alt.png` were generated with the built-in image tool on
+September 7, 2026, using the default portraits for identity and native USA game
+captures for costume colors. Gaia uses blue armor accents with his enclosed
+helmet, gold crest, and steel plates. Sho uses auburn hair, orange shoulder
+cloth, dark clothing, and gold trim. Both use a changed, opposite-facing pose
+to follow the original roster's alternate portrait convention.
+
+Local reference captures include `validation/netplay-gaia-alternate-combat.png`,
+`validation/netplay-sho-alternate-combat.png`, and the normal/alternate regular
+roster captures `validation/netplay-alts-native-*.png`. Those captures are not
+bundled. An initial Gaia recolor was rejected for retaining the default pose;
+the committed alternate uses the revised side-facing composition.

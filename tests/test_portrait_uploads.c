@@ -18,6 +18,8 @@
 #define PLAYER_2 0x801BC1E8u
 #define PLAYER_MODE_OFFSET 0x02u
 #define PLAYER_CHAR_OFFSET 0x06u
+#define PLAYER_FLAGS_OFFSET 0x40u
+#define PLAYER_FLAG_ALT_COLOR 0x0001u
 #define OT_HEAD0 0x801F25C0u
 #define NATIVE_ENV_PACKET 0x801F2640u
 #define NATIVE_HILITE_0_BASE 0x801F28ECu
@@ -245,12 +247,33 @@ const uint16_t *gpu_get_vram(void) {
 #pragma clang diagnostic pop
 #endif
 
+typedef enum TextureId {
+    TEX_UNKNOWN = 0,
+    TEX_GAIA_DEFAULT,
+    TEX_SHO_DEFAULT,
+    TEX_GAIA_ALT,
+    TEX_SHO_ALT,
+    TEX_NATIVE_GAIA_SLOT,
+    TEX_NATIVE_SHO_SLOT
+} TextureId;
+
 typedef struct UploadRecord {
     uint32_t x;
     uint32_t y;
     uint32_t w;
     uint32_t h;
+    TextureId texture;
 } UploadRecord;
+
+typedef struct DrawRecord {
+    uint32_t x;
+    uint32_t y;
+    uint32_t w;
+    uint32_t h;
+    uint32_t sx;
+    uint32_t sy;
+    TextureId texture;
+} DrawRecord;
 
 typedef struct Gp0Probe {
     int in_upload;
@@ -263,14 +286,16 @@ typedef struct Gp0Probe {
     uint32_t remaining_words;
     uint32_t e2;
     uint32_t e6;
-    UploadRecord uploads[8];
+    UploadRecord uploads[16];
     uint32_t upload_count;
+    uint32_t current_upload;
+    DrawRecord draws[64];
     uint32_t draw_count;
-    uint32_t gaia_draw_saw_uploaded;
-    uint32_t sho_draw_saw_uploaded;
     uint32_t max_node_words;
     uint32_t invalid_stream;
 } Gp0Probe;
+
+static TextureId identify_slot_texture(uint32_t x, uint32_t y);
 
 static uint32_t link24(uint32_t address) {
     return address & LINK_END;
@@ -370,10 +395,13 @@ static void reset_scene(void) {
     seed_vram();
 }
 
-static void write_select_state_and_players(void) {
+static void configure_select_players(int p1_char, uint16_t p1_flags,
+                                     int p2_char, uint16_t p2_flags) {
     psx_mod_write_half(SELECT_SCENE + SELECT_STATE_OFFSET, 5u);
-    psx_mod_write_half(PLAYER_1 + PLAYER_CHAR_OFFSET, TOSHINDEN_CHAR_GAIA);
-    psx_mod_write_half(PLAYER_2 + PLAYER_CHAR_OFFSET, TOSHINDEN_CHAR_SHO);
+    psx_mod_write_half(PLAYER_1 + PLAYER_CHAR_OFFSET, (uint16_t)p1_char);
+    psx_mod_write_half(PLAYER_1 + PLAYER_FLAGS_OFFSET, p1_flags);
+    psx_mod_write_half(PLAYER_2 + PLAYER_CHAR_OFFSET, (uint16_t)p2_char);
+    psx_mod_write_half(PLAYER_2 + PLAYER_FLAGS_OFFSET, p2_flags);
     psx_mod_write_half(PLAYER_2 + PLAYER_MODE_OFFSET, 0u);
 }
 
@@ -394,6 +422,9 @@ static void gp0_consume_upload_word(Gp0Probe *probe, uint32_t word) {
             probe->col = 0;
             probe->row++;
             if (probe->row == probe->h) {
+                if (probe->current_upload < probe->upload_count)
+                    probe->uploads[probe->current_upload].texture =
+                        identify_slot_texture(probe->x, probe->y);
                 probe->in_upload = 0;
                 probe->remaining_words = 0;
                 return;
@@ -403,6 +434,38 @@ static void gp0_consume_upload_word(Gp0Probe *probe, uint32_t word) {
     probe->remaining_words--;
     if (probe->remaining_words == 0u)
         probe->in_upload = 0;
+}
+
+static int rect_matches_pixels(uint32_t x, uint32_t y, const uint16_t *pixels) {
+    uint32_t row;
+    for (row = 0; row < PORTRAIT_H; row++) {
+        if (memcmp(vram + (y + row) * VRAM_W + x,
+                   pixels + row * PORTRAIT_W,
+                   PORTRAIT_W * sizeof(uint16_t)) != 0)
+            return 0;
+    }
+    return 1;
+}
+
+static TextureId identify_slot_texture(uint32_t x, uint32_t y) {
+    if (rect_matches_pixels(x, y, toshinden_gaia_portrait))
+        return TEX_GAIA_DEFAULT;
+    if (rect_matches_pixels(x, y, toshinden_sho_portrait))
+        return TEX_SHO_DEFAULT;
+    if (rect_matches_pixels(x, y, toshinden_gaia_alt_portrait))
+        return TEX_GAIA_ALT;
+    if (rect_matches_pixels(x, y, toshinden_sho_alt_portrait))
+        return TEX_SHO_ALT;
+    if (x == GAIA_X && y == GAIA_Y &&
+        memcmp(vram + y * VRAM_W + x, original_band,
+               PORTRAIT_W * sizeof(uint16_t)) == 0)
+        return TEX_NATIVE_GAIA_SLOT;
+    if (x == SHO_X && y == SHO_Y &&
+        memcmp(vram + y * VRAM_W + x,
+               original_band + PORTRAIT_W * PORTRAIT_H,
+               PORTRAIT_W * sizeof(uint16_t)) == 0)
+        return TEX_NATIVE_SHO_SLOT;
+    return TEX_UNKNOWN;
 }
 
 static int fixed_word_count(uint32_t word) {
@@ -438,25 +501,30 @@ static void observe_draw(Gp0Probe *probe, const uint32_t *words) {
     uint32_t v;
     uint32_t sx;
     uint32_t sy;
+    DrawRecord *draw;
 
     if (op < 0x2Cu || op > 0x2Fu)
         return;
 
-    probe->draw_count++;
+    if (probe->draw_count >= (sizeof(probe->draws) / sizeof(probe->draws[0]))) {
+        probe->invalid_stream++;
+        return;
+    }
+
     tpage = (uint16_t)(words[4] >> 16);
     u = words[2] & 0xFFu;
     v = (words[2] >> 8) & 0xFFu;
     sx = ((uint32_t)(tpage & 0x0Fu) * 64u + u) & 1023u;
     sy = (((tpage & 0x10u) != 0u ? 256u : 0u) + v) & 511u;
 
-    if (sx == GAIA_X && sy == GAIA_Y &&
-        vram[sy * VRAM_W + sx] == toshinden_gaia_portrait[0]) {
-        probe->gaia_draw_saw_uploaded = 1u;
-    }
-    if (sx == SHO_X && sy == SHO_Y &&
-        vram[sy * VRAM_W + sx] == toshinden_sho_portrait[0]) {
-        probe->sho_draw_saw_uploaded = 1u;
-    }
+    draw = &probe->draws[probe->draw_count++];
+    draw->x = words[1] & 0xFFFFu;
+    draw->y = (words[1] >> 16) & 0xFFFFu;
+    draw->w = (words[7] & 0xFFFFu) - draw->x;
+    draw->h = ((words[7] >> 16) & 0xFFFFu) - draw->y;
+    draw->sx = sx;
+    draw->sy = sy;
+    draw->texture = identify_slot_texture(sx, sy);
 }
 
 static void execute_packet_words(Gp0Probe *probe, uint32_t packet,
@@ -510,7 +578,9 @@ static void execute_packet_words(Gp0Probe *probe, uint32_t packet,
                 probe->uploads[probe->upload_count].y = probe->y;
                 probe->uploads[probe->upload_count].w = probe->w;
                 probe->uploads[probe->upload_count].h = probe->h;
+                probe->uploads[probe->upload_count].texture = TEX_UNKNOWN;
             }
+            probe->current_upload = probe->upload_count;
             probe->upload_count++;
             index += 3u;
             continue;
@@ -563,13 +633,56 @@ static void expect_original_vram_restored(void) {
     CHECK(1, "portrait VRAM bands restored exactly");
 }
 
-static void test_transient_upload_draw_restore_stream(void) {
+static const DrawRecord *find_draw(const Gp0Probe *probe, uint32_t x, uint32_t y,
+                                   uint32_t w, uint32_t h) {
+    uint32_t i;
+    for (i = 0; i < probe->draw_count; i++) {
+        const DrawRecord *draw = &probe->draws[i];
+        if (draw->x == x && draw->y == y && draw->w == w && draw->h == h)
+            return draw;
+    }
+    return 0;
+}
+
+static void expect_draw_texture(const Gp0Probe *probe, uint32_t x, uint32_t y,
+                                uint32_t w, uint32_t h, TextureId texture,
+                                const char *message) {
+    const DrawRecord *draw = find_draw(probe, x, y, w, h);
+    CHECK(draw != 0 && draw->texture == texture, message);
+}
+
+static void expect_common_stream_invariants(const Gp0Probe *probe, uint32_t expected_uploads) {
+    CHECK(probe->upload_count == expected_uploads,
+          "stream emits expected large, card, and restore uploads");
+    CHECK(expected_uploads >= 2u &&
+          probe->uploads[expected_uploads - 2u].x == GAIA_X &&
+          probe->uploads[expected_uploads - 2u].y == GAIA_Y &&
+          probe->uploads[expected_uploads - 2u].texture == TEX_NATIVE_GAIA_SLOT,
+          "penultimate upload restores Gaia native slot");
+    CHECK(expected_uploads >= 1u &&
+          probe->uploads[expected_uploads - 1u].x == SHO_X &&
+          probe->uploads[expected_uploads - 1u].y == SHO_Y &&
+          probe->uploads[expected_uploads - 1u].texture == TEX_NATIVE_SHO_SLOT,
+          "final upload restores Sho native slot");
+    CHECK(probe->max_node_words <= 255u, "all emitted OT nodes stay within 255 payload words");
+    CHECK(probe->invalid_stream == 0u, "emitted stream parses as valid GP0 packets/data");
+    CHECK(probe->e6 == 0xE6000003u, "stream restores native E6 mask state");
+    CHECK(probe->e2 == 0xE2001234u, "stream restores native E2 texture-window state");
+    CHECK(probe->in_upload == 0, "stream finishes all A0 payloads");
+    expect_original_vram_restored();
+}
+
+static void run_portrait_case(const char *label,
+                              int p1_char, uint16_t p1_flags,
+                              int p2_char, uint16_t p2_flags,
+                              TextureId p1_big, TextureId p2_big) {
     CPUState cpu;
     Gp0Probe probe;
     uint32_t appended;
 
+    printf("case: %s\n", label);
     reset_scene();
-    write_select_state_and_players();
+    configure_select_players(p1_char, p1_flags, p2_char, p2_flags);
     write_clean_select_ot(0xE2001234u, 0xE6000003u);
     toshinden_boss_roster_ui_activate();
 
@@ -583,23 +696,45 @@ static void test_transient_upload_draw_restore_stream(void) {
     memset(&probe, 0, sizeof(probe));
     execute_ot(OT_HEAD0, &probe);
 
-    CHECK(probe.upload_count == 4u, "stream emits Gaia/Sho uploads and restores");
-    CHECK(probe.uploads[0].x == GAIA_X && probe.uploads[0].y == GAIA_Y,
-          "first upload targets Gaia texture slot");
-    CHECK(probe.uploads[1].x == SHO_X && probe.uploads[1].y == SHO_Y,
-          "second upload targets Sho texture slot");
-    CHECK(probe.uploads[2].x == GAIA_X && probe.uploads[2].y == GAIA_Y,
-          "third upload restores Gaia native slot");
-    CHECK(probe.uploads[3].x == SHO_X && probe.uploads[3].y == SHO_Y,
-          "fourth upload restores Sho native slot");
-    CHECK(probe.max_node_words <= 255u, "all emitted OT nodes stay within 255 payload words");
-    CHECK(probe.invalid_stream == 0u, "emitted stream parses as valid GP0 packets/data");
-    CHECK(probe.gaia_draw_saw_uploaded != 0u, "Gaia draw samples uploaded portrait before restore");
-    CHECK(probe.sho_draw_saw_uploaded != 0u, "Sho draw samples uploaded portrait before restore");
-    CHECK(probe.e6 == 0xE6000003u, "stream restores native E6 mask state");
-    CHECK(probe.e2 == 0xE2001234u, "stream restores native E2 texture-window state");
-    CHECK(probe.in_upload == 0, "stream finishes all A0 payloads");
-    expect_original_vram_restored();
+    if (p1_big != TEX_UNKNOWN)
+        expect_draw_texture(&probe, 22u, 34u, 256u, 128u, p1_big,
+                            "P1 large portrait uses expected variant");
+    if (p2_big != TEX_UNKNOWN)
+        expect_draw_texture(&probe, 362u, 34u, 256u, 128u, p2_big,
+                            "P2 large portrait uses expected variant");
+    expect_draw_texture(&probe, 286u, 68u, 68u, 34u, TEX_GAIA_DEFAULT,
+                        "Gaia card uses default artwork");
+    expect_draw_texture(&probe, 286u, 120u, 68u, 34u, TEX_SHO_DEFAULT,
+                        "Sho card uses default artwork");
+    expect_common_stream_invariants(&probe,
+        (p1_big != TEX_UNKNOWN ? 1u : 0u) +
+        (p2_big != TEX_UNKNOWN ? 1u : 0u) + 4u);
+}
+
+static void test_transient_upload_draw_restore_stream(void) {
+    run_portrait_case("Gaia default P1, Sho default P2",
+                      TOSHINDEN_CHAR_GAIA, 0u,
+                      TOSHINDEN_CHAR_SHO, 0u,
+                      TEX_GAIA_DEFAULT, TEX_SHO_DEFAULT);
+}
+
+static void test_variant_large_portraits_and_default_cards(void) {
+    run_portrait_case("same Gaia, P2 alt color",
+                      TOSHINDEN_CHAR_GAIA, 0u,
+                      TOSHINDEN_CHAR_GAIA, PLAYER_FLAG_ALT_COLOR,
+                      TEX_GAIA_DEFAULT, TEX_GAIA_ALT);
+    run_portrait_case("same Sho, P1 alt color",
+                      TOSHINDEN_CHAR_SHO, PLAYER_FLAG_ALT_COLOR,
+                      TOSHINDEN_CHAR_SHO, 0u,
+                      TEX_SHO_ALT, TEX_SHO_DEFAULT);
+    run_portrait_case("regular P1, Gaia alt P2",
+                      0, 0u,
+                      TOSHINDEN_CHAR_GAIA, PLAYER_FLAG_ALT_COLOR,
+                      TEX_UNKNOWN, TEX_GAIA_ALT);
+    run_portrait_case("Sho alt P1, regular P2",
+                      TOSHINDEN_CHAR_SHO, PLAYER_FLAG_ALT_COLOR,
+                      1, 0u,
+                      TEX_SHO_ALT, TEX_UNKNOWN);
 }
 
 static void test_native_ot_rejects_vram_changing_packets(void) {
@@ -637,7 +772,8 @@ static void test_builder_overflow_fails_closed(void) {
     toshinden_builder_init(&builder, MOD_DMA_BASE);
     builder.end = builder.base + 32u;
 
-    CHECK(!toshinden_emit_boss_portrait_uploads(&builder),
+    CHECK(!toshinden_upload_portrait_to_scratch(&builder, GAIA_X,
+        TOSHINDEN_CHAR_GAIA, 0),
           "portrait upload builder reports overflow");
     CHECK(builder.failed != 0, "builder overflow latches failure");
     CHECK(!toshinden_emit_words(&builder, words, 1u),
@@ -649,6 +785,7 @@ int main(void) {
     CHECK(activation_regs == 1, "constructor registers boss UI activation plugin");
     CHECK(entry_regs == 1, "constructor registers boss UI final-OT hook");
     test_transient_upload_draw_restore_stream();
+    test_variant_large_portraits_and_default_cards();
     test_native_ot_rejects_vram_changing_packets();
     test_builder_overflow_fails_closed();
     if (failures) {

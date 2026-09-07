@@ -10,6 +10,7 @@
 #define TOSHINDEN_PLAYER_2               0x801BC1E8u
 #define TOSHINDEN_PLAYER_MODE_OFFSET     0x02u
 #define TOSHINDEN_PLAYER_CHAR_OFFSET     0x06u
+#define TOSHINDEN_PLAYER_FLAGS_OFFSET    0x40u
 
 #define TOSHINDEN_CHAR_GAIA              8
 #define TOSHINDEN_CHAR_SHO               9
@@ -17,7 +18,7 @@
 #define TOSHINDEN_OT_HEAD_0              0x801F25C0u
 #define TOSHINDEN_OT_HEAD_1              0x801F4ED0u
 
-#define TOSHINDEN_UI_DMA_BUFFER_SIZE     (192u * 1024u)
+#define TOSHINDEN_UI_DMA_BUFFER_SIZE     (256u * 1024u)
 #define TOSHINDEN_UI_MAX_OT_WALK         8192u
 #define TOSHINDEN_UI_LINK_END            0x00FFFFFFu
 
@@ -69,7 +70,7 @@ static uint32_t s_dma_buffers[2];
 
 extern void toshinden_boss_portraits_snapshot_native(int gaia_x, int gaia_y, int sho_x, int sho_y);
 extern int toshinden_boss_portraits_restore_valid(void);
-extern const uint16_t *toshinden_boss_portrait_pixels(int char_id);
+extern const uint16_t *toshinden_boss_portrait_pixels(int char_id, int alternate);
 extern const uint16_t *toshinden_boss_portrait_restore_pixels(int char_id);
 
 typedef struct ToshindenUiBuilder {
@@ -125,6 +126,10 @@ static int toshinden_player_char(uint32_t player) {
 
 static int toshinden_player_is_cpu(uint32_t player) {
     return (psx_mod_read_half(player + TOSHINDEN_PLAYER_MODE_OFFSET) & 1u) != 0u;
+}
+
+static int toshinden_player_uses_alt_portrait(uint32_t player) {
+    return (psx_mod_read_half(player + TOSHINDEN_PLAYER_FLAGS_OFFSET) & 1u) != 0u;
 }
 
 static int toshinden_select_is_active(void) {
@@ -574,17 +579,6 @@ static int toshinden_emit_vram_upload(ToshindenUiBuilder *builder,
     return emitted_pixels == pixel_words;
 }
 
-static int toshinden_emit_boss_portrait_uploads(ToshindenUiBuilder *builder) {
-    return toshinden_emit_vram_upload(builder,
-        TOSHINDEN_GAIA_VRAM_X, TOSHINDEN_GAIA_VRAM_Y,
-        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
-        toshinden_boss_portrait_pixels(TOSHINDEN_CHAR_GAIA)) &&
-        toshinden_emit_vram_upload(builder,
-        TOSHINDEN_SHO_VRAM_X, TOSHINDEN_SHO_VRAM_Y,
-        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
-        toshinden_boss_portrait_pixels(TOSHINDEN_CHAR_SHO));
-}
-
 static int toshinden_emit_boss_portrait_restores(ToshindenUiBuilder *builder) {
     if (!toshinden_boss_portraits_restore_valid())
         return 0;
@@ -773,9 +767,10 @@ static void toshinden_emit_text(ToshindenUiBuilder *builder,
     }
 }
 
-static int toshinden_get_boss_portrait(int char_id,
-                                       ToshindenBossPortraitDescriptor *out) {
-    if (char_id != TOSHINDEN_CHAR_GAIA && char_id != TOSHINDEN_CHAR_SHO)
+static int toshinden_get_scratch_portrait(uint32_t scratch_x,
+                                          ToshindenBossPortraitDescriptor *out) {
+    if (scratch_x != TOSHINDEN_GAIA_VRAM_X &&
+        scratch_x != TOSHINDEN_SHO_VRAM_X)
         return 0;
 
     out->u0 = TOSHINDEN_BOSS_PORTRAIT_U0;
@@ -787,38 +782,63 @@ static int toshinden_get_boss_portrait(int char_id,
     out->u3 = TOSHINDEN_BOSS_PORTRAIT_U1;
     out->v3 = TOSHINDEN_BOSS_PORTRAIT_V1;
     out->clut = TOSHINDEN_BOSS_PORTRAIT_CLUT;
-    out->tpage = char_id == TOSHINDEN_CHAR_GAIA ?
+    out->tpage = scratch_x == TOSHINDEN_GAIA_VRAM_X ?
         TOSHINDEN_GAIA_TPAGE : TOSHINDEN_SHO_TPAGE;
     return 1;
 }
 
-static void toshinden_emit_portrait_if_configured(ToshindenUiBuilder *builder,
-                                                  int char_id,
-                                                  int32_t x, int32_t y,
-                                                  int32_t w, int32_t h) {
+static void toshinden_emit_scratch_portrait(ToshindenUiBuilder *builder,
+                                            uint32_t scratch_x,
+                                            int32_t x, int32_t y,
+                                            int32_t w, int32_t h) {
     ToshindenBossPortraitDescriptor desc;
 
-    if (!toshinden_get_boss_portrait(char_id, &desc))
+    if (!toshinden_get_scratch_portrait(scratch_x, &desc))
         return;
 
     toshinden_emit_ft4(builder, x, y, w, h, &desc);
 }
 
+static int toshinden_upload_portrait_to_scratch(ToshindenUiBuilder *builder,
+                                                uint32_t scratch_x,
+                                                int char_id,
+                                                int alternate) {
+    uint32_t scratch_y;
+
+    if (!toshinden_is_boss_char(char_id))
+        return 0;
+
+    scratch_y = scratch_x == TOSHINDEN_SHO_VRAM_X ?
+        TOSHINDEN_SHO_VRAM_Y : TOSHINDEN_GAIA_VRAM_Y;
+
+    return toshinden_emit_vram_upload(builder,
+        scratch_x, scratch_y,
+        TOSHINDEN_BOSS_PORTRAIT_W, TOSHINDEN_BOSS_PORTRAIT_H,
+        toshinden_boss_portrait_pixels(char_id, alternate));
+}
+
 static void toshinden_emit_big_portrait(ToshindenUiBuilder *builder,
                                         int char_id,
+                                        uint32_t player,
                                         int player_index) {
     int32_t x = player_index == 0 ? 22 : 362;
     int32_t y = 34;
     int32_t w = 256;
     int32_t h = 128;
+    int alternate;
 
     if (!toshinden_is_boss_char(char_id))
         return;
 
-    toshinden_emit_rect(builder, x, y, w, h, toshinden_rgb(0, 0, 0));
-    toshinden_emit_portrait_if_configured(builder, char_id, x, y, w, h);
-}
+    alternate = toshinden_player_uses_alt_portrait(player);
+    if (!toshinden_upload_portrait_to_scratch(builder,
+        TOSHINDEN_GAIA_VRAM_X, char_id, alternate))
+        return;
 
+    toshinden_emit_rect(builder, x, y, w, h, toshinden_rgb(0, 0, 0));
+    toshinden_emit_scratch_portrait(builder,
+        TOSHINDEN_GAIA_VRAM_X, x, y, w, h);
+}
 static void toshinden_emit_player_badge(ToshindenUiBuilder *builder,
                                         int player_index,
                                         int32_t x, int32_t y,
@@ -852,7 +872,8 @@ static void toshinden_emit_boss_card(ToshindenUiBuilder *builder,
         TOSHINDEN_CARD_W + 4, TOSHINDEN_CARD_H + 4, dim);
     toshinden_emit_rect(builder, TOSHINDEN_CARD_X, y,
         TOSHINDEN_CARD_W, TOSHINDEN_CARD_H, panel);
-    toshinden_emit_portrait_if_configured(builder, char_id,
+    toshinden_emit_scratch_portrait(builder,
+        char_id == TOSHINDEN_CHAR_GAIA ? TOSHINDEN_GAIA_VRAM_X : TOSHINDEN_SHO_VRAM_X,
         TOSHINDEN_CARD_X, y, TOSHINDEN_CARD_W, TOSHINDEN_CARD_H);
     toshinden_emit_border(builder, TOSHINDEN_CARD_X, y,
         TOSHINDEN_CARD_W, TOSHINDEN_CARD_H, 0, border);
@@ -879,8 +900,15 @@ static void toshinden_build_boss_ui(ToshindenUiBuilder *builder) {
     int p1_char = toshinden_player_char(TOSHINDEN_PLAYER_1);
     int p2_char = toshinden_player_char(TOSHINDEN_PLAYER_2);
 
-    toshinden_emit_big_portrait(builder, p1_char, 0);
-    toshinden_emit_big_portrait(builder, p2_char, 1);
+    toshinden_emit_big_portrait(builder, p1_char, TOSHINDEN_PLAYER_1, 0);
+    toshinden_emit_big_portrait(builder, p2_char, TOSHINDEN_PLAYER_2, 1);
+
+    if (!toshinden_upload_portrait_to_scratch(builder,
+        TOSHINDEN_GAIA_VRAM_X, TOSHINDEN_CHAR_GAIA, 0))
+        return;
+    if (!toshinden_upload_portrait_to_scratch(builder,
+        TOSHINDEN_SHO_VRAM_X, TOSHINDEN_CHAR_SHO, 0))
+        return;
 
     toshinden_emit_boss_card(builder, TOSHINDEN_CHAR_GAIA,
         TOSHINDEN_GAIA_Y,
@@ -971,8 +999,6 @@ static void toshinden_boss_roster_ui_final_ot(CPUState *cpu,
     toshinden_suppress_native_boss_cursor(head, bank, p1_char, p2_char);
 
     toshinden_builder_init(&builder, s_dma_buffers[bank]);
-    if (!toshinden_emit_boss_portrait_uploads(&builder))
-        return;
     if (!toshinden_emit_gpu_env(&builder, 0xE2000000u))
         return;
     toshinden_build_boss_ui(&builder);
@@ -989,7 +1015,8 @@ static void toshinden_boss_roster_ui_final_ot(CPUState *cpu,
 }
 
 static void toshinden_boss_roster_ui_activate(void) {
-    s_boss_ui_enabled = 1;
+    /* Reserve stable host-backed addresses before any state can be loaded. */
+    s_boss_ui_enabled = toshinden_ensure_dma_buffers();
 }
 
 PSX_MOD_CONSTRUCTOR(toshinden_register_boss_roster_ui_plugins) {

@@ -43,8 +43,9 @@ fighters. The normal eight-character roster stays in place as the bottom row;
 Sho is the middle extra row and Gaia is the top extra row. Up cycles roster to
 Sho to Gaia to roster, Down cycles roster to Gaia to Sho to roster, and
 Left/Right only moves through the regular roster. The normal confirm button
-starts the match through the game's selection path. The package uses new
-generated portrait art; source details are documented in
+starts the match through the game's selection path. Press Select for an alternate
+costume and matching portrait, including new poses for Gaia and Sho. Each player
+can choose independently. The package uses new generated portrait art; source details are documented in
 [portrait sources and generation prompts](assets/mods/boss-roster/SOURCE.md).
 
 ![Gaia and Sho selectable above the original eight fighters](.github/screenshots/extra-roster.png)

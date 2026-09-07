@@ -312,3 +312,29 @@ Compile either title regression with
 and run the result. These fixes are validated in the local Windows build;
 0.1.1 release assets predate them. No new online or Linux runtime session was
 run for this follow-up.
+
+
+## Post-0.1.1 Gaia and Sho alternate artwork, September 7, 2026
+
+- Added blue-armored Gaia and auburn-haired, orange-clad Sho alternate portraits,
+  based on native USA costume captures. Both use distinct opposite-facing poses.
+  Select changes the owning player's large portrait; small roster cards retain
+  default art. The Extra Roster package is now 1.0.1 so online mod matching can
+  distinguish this asset and command-stream revision.
+- Inspected live Gaia and Sho mirror selections with different variants, mixed
+  regular/extra selections, and Select toggling. Rechecked Eiji, Kayin, Sofia,
+  and Rungo alternate portrait interiors: all four matched clean native captures
+  pixel for pixel. The production-code packet regression passed per-player
+  variants, ordered uploads, exact native texture restoration, mask/window
+  restoration, and buffer limits. Live VRAM peeks can occur during a transient
+  upload; the packet test checks restoration after the complete stream.
+- Fixed the garbled save-state load: the framework now saves mod guest-memory
+  and GPU command buffers with the machine state. The title reserves its two
+  buffers during mod activation. New selector states reloaded successfully;
+  an old state without those buffers was rejected safely. The focused framework
+  regression covers payload/cursor restoration and rejection before mutation.
+  This is a focused save/load check, not an exhaustive save-state compatibility
+  audit. Older states without mod memory cannot load with these allocations active.
+- Windows Release build and focused portrait/framework regressions passed.
+  This follow-up did not repeat Linux runtime or online sessions. Published
+  0.1.1 release assets predate these changes.

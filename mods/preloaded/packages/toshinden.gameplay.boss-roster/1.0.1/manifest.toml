@@ -1,6 +1,6 @@
 format_version = 5
 id = "toshinden.gameplay.boss-roster"
-version = "1.0.0"
+version = "1.0.1"
 name = "Battle Arena Toshinden Extra Roster"
 author = "mstan"
 description = "Adds Gaia and Sho as extra character-select rows. Up cycles roster/Sho/Gaia/roster, Down cycles roster/Gaia/Sho/roster, Left/Right stays on the regular roster, and confirm uses the normal selection path."
