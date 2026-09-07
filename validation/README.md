@@ -249,3 +249,30 @@ mods are explicitly unsupported. LAN / Direct IP retains vanilla sessions.
   BIOS, disc, and GPU initialization passed. This was a startup smoke, not a
   full Linux playthrough. The smoke script's initial case-sensitive BIOS label
   check was corrected to accept the runtime's uppercase OPENBIOS label.
+
+
+## Post-0.1.1 widescreen score fix, September 7, 2026
+
+- Reproduced split scores at 21:9 with eight-digit values for both players.
+  The generic horizontal anchor heuristic assigned different anchors to digits
+  in the same score. Both native eight-SPRT score pools (`bank+0x1E0` and
+  `bank+0x280`, stride `0x14`) now remain grouped relative to the timer.
+- Rebuilt the Windows game and inspected live captures at 4:3, 16:9, 21:9,
+  32:9, and after resizing back to 21:9. Temporarily injected scores `12345678`
+  and `87654321` appeared intact at every size. All eight glyph cells remained
+  visible; score bounds relative to screen center varied by at most three
+  pixels from the 4:3 capture due to raster sampling. Restored the original
+  zero-score state and checked the pause screen at 21:9.
+- Health bars still extend to the edges. Names remain edge-anchored; the timer
+  and pause text retain their proportions. The user also confirmed the scores
+  look fixed in the running build.
+- Standalone callback regression passed with native SPRT layouts for every
+  score digit in both HUD banks, neighboring HUD roles, disabled-mod behavior,
+  and 4:3 passthrough. Run from the title root:
+  `clang -std=c99 -Wall -Wextra -Werror -Itests/stubs -I. tests/test_widescreen_scores.c -o validation/test_widescreen_scores.exe`,
+  then run `validation/test_widescreen_scores.exe`.
+- Restored the README Discord badge using the existing Super Mario World
+  repository asset and removed internal process details from the player README.
+
+These checks cover the source update and local Windows build. The published
+0.1.1 packages predate this score fix.

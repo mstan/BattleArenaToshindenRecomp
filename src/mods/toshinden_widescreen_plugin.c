@@ -219,6 +219,13 @@ static int32_t toshinden_anchor_for_packet(uint32_t packet,
 
     if (min_y >= TOSHINDEN_MENU_TEXT_Y_MIN)
         return center;
+    /* The paired score fields are eight SPRTs each, initialized at
+     * bank+0x1E0 and bank+0x280 (0x14 bytes per digit). Anchor the whole
+     * fields to the timer's center: choosing by each digit's X splits long
+     * P1 scores across anchors and moves P2 scores toward the outer edge. */
+    if (toshinden_is_battle_ui_packet(packet) &&
+        role >= 0x1E0u && role < 0x320u)
+        return center;
     /* 80181F48/50 initialize the large overlay font pools at bank+0x1428.
      * DEMONSTRATION is emitted there at y=32..48, above the usual menu band.
      * Keep its glyphs together. Timer/win-marker quads are separate earlier

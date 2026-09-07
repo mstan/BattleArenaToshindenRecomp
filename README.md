@@ -12,14 +12,12 @@ and [recomp-ui](https://github.com/mstan/recomp-ui).
 
 ## Status
 
-**0.1.1** is believed to be stable based on gameplay testing
-and user validation, despite being an early release. Further testing and bug
-reports are welcome; the validation notes describe the remaining limits.
+**0.1.1** is believed to be stable despite being an early release.
+Bug reports are welcome; see
+[validation notes](validation/README.md) for the tested build and scope.
 
 The game boots through its introduction and character selection into combat.
-The initial playable baseline was validated and approved for enhancements on
-September 6, 2026. The launcher includes disc setup, settings, and a Mods page.
-See [validation notes](validation/README.md) for the tested build and scope.
+The launcher includes disc setup, settings, and a Mods page.
 
 ## Enhancements
 
@@ -111,14 +109,8 @@ The launcher also exposes the same Generate & Build workflow. See the
 and other platforms. SDL3 is the default host backend; SDL2 is an explicit
 compatibility build option.
 
-Submodule gitlinks are the authoritative framework versions. Generated code,
-disc data, local settings, saves, and build output do not belong in commits.
-
-Native release packaging follows the Tomba 2 / Mega Man X6 scripts:
-`tools/package_release.ps1` produces the Windows ZIP and
-`tools/package_appimage.sh` produces the Linux AppImage. Both read root `VERSION`
-and stage clean player defaults from `packaging/release/`. Packaging requires
-locally generated game code; it excludes disc data, retail BIOS files, and saves.
+To package a local build, use `tools/package_release.ps1` for a Windows ZIP
+or `tools/package_appimage.sh` for a Linux AppImage.
 
 ## Netplay
 
@@ -138,12 +130,11 @@ Automatic mod downloads and resource-backed mods are not supported in this build
 LAN / Direct IP sessions retain the vanilla mod policy.
 
 Validation covered a password-protected online room through the public relay,
-host-to-guest mod selection, and Gaia versus Sho selection and combat using
-independent player inputs. Both test clients ran on one computer while their
-match traffic used the public server. This is a functional online check, not
-exhaustive testing of different networks or adverse connection conditions.
-See the [netplay guide](psxrecomp/docs/NETPLAY.md) for connection options and the
-[validation notes](validation/README.md) for the tested scope and known limits.
+host-to-guest mod selection, and Gaia versus Sho combat. This is a functional
+online check, not exhaustive testing of different networks or adverse connection
+conditions. See the [netplay guide](psxrecomp/docs/NETPLAY.md) for connection
+options and the [validation notes](validation/README.md) for the tested scope
+and known limits.
 
 ## License
 
