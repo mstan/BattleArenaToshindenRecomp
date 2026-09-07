@@ -1,0 +1,46 @@
+{
+  "format_version": 1,
+  "game": {
+    "name": "BattleArenaToshinden",
+    "id": "SCUS-94200",
+    "boot_exe": "SCUS_942.00"
+  },
+  "marketing": {
+    "description": "Battle Arena Toshinden recompiled for modern platforms.",
+    "publisher": "Takara",
+    "year": "1995",
+    "region": "USA",
+    "players": 2
+  },
+  "rom_identity": {
+    "cue_name": "Battle Arena Toshinden (USA).cue",
+    "bin_name": "Battle Arena Toshinden (USA) (Track 01).bin",
+    "track_counts": [
+      14
+    ],
+    "require_cue": true,
+    "data_track": {
+      "size": 14662368,
+      "md5": "70b362b3b09d0a3c3999ce9f055620e6",
+      "sha1": "cb03e66d2a5e68f402f9c64741a94c02ca78d4c5",
+      "crc32": "6e59405f"
+    },
+    "disc_fp": "436b9f6c0d2d44b61e2e0608ddfa1fdbaf7b8fec289a5ea563d1be6225c40cd4"
+  },
+  "exe": {
+    "load_address": "0x80175000",
+    "entry_pc": "0x80196CA8",
+    "text_size": "0x00043800",
+    "stack_base": "0x801FFFF0"
+  },
+  "seeds": {
+    "count": 424,
+    "source": "boot_exe_jal"
+  },
+  "warnings": [],
+  "notes": [
+    "entry_pc/load_address/text_size/stack_base taken from PS-X EXE header.",
+    "seeds are first-pass boot-EXE JAL targets (+ entry); expect to grow as overlays / runtime paths are discovered.",
+    "required_disc_fp is psxrecomp-toc-v1 (matches runtime DiscIdentity)."
+  ]
+}

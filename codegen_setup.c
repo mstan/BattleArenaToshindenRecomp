@@ -6,17 +6,17 @@
 #include "psxrecomp_codegen_host.h"
 
 static const PsxrecompCodegenHostConfig kCodegenConfig = {
-    .display_name = "Battle Arena Toshinden",
-    .project_root_env = "BATTLE_ARENA_TOSHINDEN_RECOMP_PROJECT_ROOT",
-    .build_dir_env = "BATTLE_ARENA_TOSHINDEN_RECOMP_BUILD_DIR",
-    .force_setup_env = "BATTLE_ARENA_TOSHINDEN_RECOMP_FORCE_SETUP",
+    .display_name = "BattleArenaToshinden",
+    .project_root_env = "BATTLEARENATOSHINDENRECOMP_PROJECT_ROOT",
+    .build_dir_env = "BATTLEARENATOSHINDENRECOMP_BUILD_DIR",
+    .force_setup_env = "BATTLEARENATOSHINDENRECOMP_FORCE_SETUP",
     .psxrecomp_cli_relpath = "psxrecomp/psxrecomp_cli.py",
     .seed_cfg_relpath = "game.toml",
     .game_toml_relpath = "game.toml",
-    .gen_marker_relpath = "generated/SLUS_01234_dispatch.c",
+    .gen_marker_relpath = "generated/SCUS_942.00_dispatch.c",
     .build_dir_name = "build-release",
     .cmake_target = "psx-runtime",
-    .exe_basename = "Battle_Arena_Toshinden__Recompiled",
+    .exe_basename = "BattleArenaToshinden_Recompiled",
     .prepare_note =
         "Uses your legal disc with the local psxrecomp SDK to generate "
         "BIOS + game C, then cmake --build. The product lives under "

@@ -1,4 +1,4 @@
-# Battle Arena Toshinden  Recompiled
+# BattleArenaToshinden Recompiled
 
 <!-- retcomm-readme-metrics -->
 [![GitHub downloads (all assets, all releases)](https://img.shields.io/github/downloads/mstan/BattleArenaToshindenRecomp/total)](https://github.com/mstan/BattleArenaToshindenRecomp/releases)
@@ -6,24 +6,18 @@
 [![GitHub release](https://img.shields.io/github/v/release/mstan/BattleArenaToshindenRecomp)](https://github.com/mstan/BattleArenaToshindenRecomp/releases/latest)
 <!-- /retcomm-readme-metrics -->
 
-<!-- retcomm-readme-boxart -->
-<p align="center">
-  <img src="launcher_assets/img/boxart.png" alt="Battle Arena Toshinden box art" width="280">
-</p>
-<!-- /retcomm-readme-boxart -->
-
-Static recompilation of **Battle Arena Toshinden** built on
+Static recompilation of **BattleArenaToshinden** built on
 [psxrecomp](https://github.com/mstan/psxrecomp) and
 [recomp-ui](https://github.com/mstan/recomp-ui).
 
-Weapon-based 3D arena fighting with eight selectable fighters.
+Battle Arena Toshinden recompiled for modern platforms.
 
 | | |
 |---|---|
 | Players | 2 |
 | Region | USA |
-| Publisher | - |
-| Year | - |
+| Publisher | Takara |
+| Year | 1995 |
 
 Scaffolded with the New Project Layout. See
 `psxrecomp/docs/GAME_PROJECT_SETUP.md` for the full flow.

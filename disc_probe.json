@@ -1,0 +1,29 @@
+{
+  "cue_path": "/f/Projects/psxrecomp/_tmp_toshinden_scaffold_20260906233155/BattleArenaToshindenRecomp/disc/Battle Arena Toshinden (USA).cue",
+  "cue_name": "Battle Arena Toshinden (USA).cue",
+  "bin_name": "Battle Arena Toshinden (USA) (Track 01).bin",
+  "track_count": 14,
+  "data_track_size": 14662368,
+  "data_track_md5": "70b362b3b09d0a3c3999ce9f055620e6",
+  "data_track_sha1": "cb03e66d2a5e68f402f9c64741a94c02ca78d4c5",
+  "data_track_crc32": "6e59405f",
+  "boot_exe": "SCUS_942.00",
+  "serial": "SCUS-94200",
+  "serial_exe": "SCUS_942.00",
+  "volume_id": "BATTLEARENATOSHINDEN",
+  "display_name": "BattleArenaToshinden",
+  "load_address": "0x80175000",
+  "entry_pc": "0x80196CA8",
+  "text_size": "0x00043800",
+  "stack_base": "0x801FFFF0",
+  "require_cue": true,
+  "required_disc_fp": "436b9f6c0d2d44b61e2e0608ddfa1fdbaf7b8fec289a5ea563d1be6225c40cd4",
+  "boot_exe_sha256": "928c495ca0e9221d034085e17a79e81789738b0c389898c1d5f2384f51330f66",
+  "seed_count": 424,
+  "warnings": [],
+  "notes": [
+    "entry_pc/load_address/text_size/stack_base taken from PS-X EXE header.",
+    "seeds are first-pass boot-EXE JAL targets (+ entry); expect to grow as overlays / runtime paths are discovered.",
+    "required_disc_fp is psxrecomp-toc-v1 (matches runtime DiscIdentity)."
+  ]
+}

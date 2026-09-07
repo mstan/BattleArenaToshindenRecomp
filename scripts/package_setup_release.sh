@@ -78,8 +78,8 @@ exec bash "${PACKAGER}" \
   --build-dir "${BUILD_DIR}" \
   --artifact "${ARTIFACT_TAG}" \
   --zip-prefix bat \
-  --exe-name Battle_Arena_Toshinden__Recompiled \
-  --display-name "Battle Arena Toshinden  Recompiled" \
+  --exe-name BattleArenaToshinden_Recompiled \
+  --display-name "Battle Arena Toshinden Recompiled" \
   --recompiler-build "${RECOMPILER_BUILD}" \
   --version-env RELEASE_VERSION \
   --disc-hint "your legally owned Battle Arena Toshinden disc" \

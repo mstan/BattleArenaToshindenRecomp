@@ -1,35 +1,53 @@
-# Minimal game.toml stub for the New Project Layout.
-# With setup_project --disc <cue>, probe_disc.py overwrites this with
-# serial / EXE header / Track 01 digests / TOC fp / [netplay] gates, and writes
-# seeds/ghidra_funcs.txt (boot-EXE JAL scan).
-# Without --disc, fill by hand (or re-run probe_disc.py later).
-# See psxrecomp/docs/GAME_PROJECT_SETUP.md and docs/config_schema.md.
+# Autofilled by tools/new_project_layout/probe_disc.py from your legal dump.
+# Review before shipping. Runtime quirks / overlay seeds still need hand work.
 
 [game]
-name = "Battle Arena Toshinden"
-# id = "SLUS-XXXXX"
+name = "BattleArenaToshinden"
+id = "SCUS-94200"
 players = 2
-# exe = "disc/SLUS_01234"
-# disc = "disc/game.cue"
-# load_address = "0x80010000"
-# entry_pc = "0x800XXXXX"
-# text_size = "0x00000000"
-# stack_base = "0x801FFFF0"
+exe = "disc/SCUS_942.00"
+disc = "iso/Battle Arena Toshinden (USA).cue"
+load_address = "0x80175000"
+entry_pc = "0x80196CA8"
+text_size = "0x00043800"
+stack_base = "0x801FFFF0"
+
+# Digests are for data Track 01 (first BINARY FILE / TRACK 01).
+[prepare_disc]
+out_dir = "disc"
+bin_name = "Battle Arena Toshinden (USA) (Track 01).bin"
+cue_name = "Battle Arena Toshinden (USA).cue"
+boot_exe = "SCUS_942.00"
+known_sizes = [14662368]
+known_md5 = [
+  "70b362b3b09d0a3c3999ce9f055620e6",
+]
+known_sha1 = [
+  "cb03e66d2a5e68f402f9c64741a94c02ca78d4c5",
+]
+known_crc32 = [
+  "6e59405f",
+]
 
 [recompiler]
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
 
-# Optional identity hashes for Generate / netplay dump checks:
-# [prepare_disc]
-# out_dir = "disc"
-# boot_exe = "SLUS_01234"
-# known_sizes = [...]
-# known_md5 = [...]
-# known_sha1 = [...]
+[runtime]
+window_title = "BattleArenaToshinden Recompiled"
+memcard_dir = "saves"
 
-# [netplay]
-# require_cue = true
-# required_tracks = 0
-# required_disc_fp = "…"
+[video]
+renderer = "opengl"
+aspect_ratio = "4:3"
+
+[controller]
+default_mode = "digital"
+
+# Online mount gate: digests + track count + optional TOC fingerprint
+# (see docs/NETPLAY.md).
+[netplay]
+require_cue = true
+required_tracks = 14
+required_disc_fp = "436b9f6c0d2d44b61e2e0608ddfa1fdbaf7b8fec289a5ea563d1be6225c40cd4"
