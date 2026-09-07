@@ -1,11 +1,5 @@
 # Battle Arena Toshinden Recompiled
 
-> This recompilation is a byproduct of developing
-> [psxrecomp](https://github.com/mstan/psxrecomp). These are in-development
-> previews, with more testing and polish still to come. Contributions,
-> testing, issues, and PRs to the game or framework are welcome.
-> Read more: [Recomp + AI: 5 Months Later](https://1379.tech/recomp-ai-5-months-later/).
-
 Static recompilation of **Battle Arena Toshinden (USA)**, PlayStation serial
 **SCUS-94200**, to native code using [psxrecomp](https://github.com/mstan/psxrecomp)
 and [recomp-ui](https://github.com/mstan/recomp-ui).
@@ -27,7 +21,54 @@ The initial playable baseline was validated and approved for enhancements on
 September 6, 2026. The launcher includes disc setup, settings, and a Mods page.
 See [validation notes](validation/README.md) for the tested build and scope.
 
+## Enhancements
+
+**Battle Arena Toshinden Widescreen** offers fixed 16:9 and Adaptive. Adaptive
+follows the current window or fullscreen aspect from 4:3 through 32:9, the
+framework's current limit. Wider gameplay views reveal more of the stage;
+health gauges extend to the perimeter while labels, icons, timer, and pause UI
+retain their authored proportions. True 2D screens retain their 4:3 presentation.
+
+![Gaia versus Sho in 21:9 adaptive ultrawide, with gauges extended to the edges](.github/screenshots/ultrawide.png)
+
+*21:9 gameplay with adaptive widescreen enabled. The stage view expands while
+characters, text, and icons retain their proportions.*
+
+**Battle Arena Toshinden Frame Blending** presents completed game frames at
+the display's measured refresh rate or a selected 60, 90, 120, 144, 165, or
+240 Hz target. Motion-adaptive blending reduces trails on large image changes.
+Game simulation, inputs, timers, and audio retain their original cadence.
+This is temporal image blending, not motion-vector frame generation.
+
+**Battle Arena Toshinden Extra Roster** adds Gaia and Sho as optional selectable
+fighters. The normal eight-character roster stays in place as the bottom row;
+Sho is the middle extra row and Gaia is the top extra row. Up cycles roster to
+Sho to Gaia to roster, Down cycles roster to Gaia to Sho to roster, and
+Left/Right only moves through the regular roster. The normal confirm button
+starts the match through the game's selection path. The package uses new
+generated portrait art; source details are documented in
+[portrait sources and generation prompts](assets/mods/boss-roster/SOURCE.md).
+
+![Gaia and Sho selectable in the EXTRA rows, above the original eight fighters](.github/screenshots/extra-roster.png)
+
+*Gaia and Sho in the EXTRA column, with original-game-inspired mod portraits.
+Up/Down moves between rows; Left/Right moves within the regular roster only.*
+
+**Battle Arena Toshinden Desperation at Any Health** lets players perform
+each character's normal desperation command at any health. It does not add a
+one-button shortcut and does not change health, damage, KO handling, max HP, or
+HUD gauges.
+
+The shared framework also supplies standard enhancement packages, including
+PGXP. Each package's description and options are available on the Mods page.
+All title enhancements are optional and disabled by default.
+
 ## Playing
+
+Download the **Windows ZIP** or **Linux x86_64 AppImage** from
+[Releases](https://github.com/mstan/BattleArenaToshindenRecomp/releases/latest).
+Extract the Windows package before running it. On Linux, make the AppImage
+executable and launch it. These packages contain the compiled game runtime.
 
 Select your legally obtained **USA BIN/CUE disc image** in the launcher, use
 Generate & Build when prompted, and launch the game. Keep all 14 tracks beside
@@ -72,47 +113,11 @@ compatibility build option.
 Submodule gitlinks are the authoritative framework versions. Generated code,
 disc data, local settings, saves, and build output do not belong in commits.
 
-## Enhancements
-
-**Battle Arena Toshinden Widescreen** offers fixed 16:9 and Adaptive. Adaptive
-follows the current window or fullscreen aspect from 4:3 through 32:9, the
-framework's current limit. Wider gameplay views reveal more of the stage;
-health gauges extend to the perimeter while labels, icons, timer, and pause UI
-retain their authored proportions. True 2D screens retain their 4:3 presentation.
-
-![Gaia versus Sho in 21:9 adaptive ultrawide, with gauges extended to the edges](.github/screenshots/ultrawide.png)
-
-*21:9 gameplay with adaptive widescreen enabled. The stage view expands while
-characters, text, and icons retain their proportions.*
-
-**Battle Arena Toshinden Frame Blending** presents completed game frames at
-the display's measured refresh rate or a selected 60, 90, 120, 144, 165, or
-240 Hz target. Motion-adaptive blending reduces trails on large image changes.
-Game simulation, inputs, timers, and audio retain their original cadence.
-This is temporal image blending, not motion-vector frame generation.
-
-**Battle Arena Toshinden Extra Roster** adds Gaia and Sho as optional selectable
-fighters. The normal eight-character roster stays in place as the bottom row;
-Sho is the middle extra row and Gaia is the top extra row. Up cycles roster to
-Sho to Gaia to roster, Down cycles roster to Gaia to Sho to roster, and
-Left/Right only moves through the regular roster. The normal confirm button
-starts the match through the game's selection path. The package uses new
-generated portrait art; source details are documented in
-[portrait sources and generation prompts](assets/mods/boss-roster/SOURCE.md).
-
-![Gaia and Sho selectable in the EXTRA rows, above the original eight fighters](.github/screenshots/extra-roster.png)
-
-*Gaia and Sho in the EXTRA column, with original-game-inspired mod portraits.
-Up/Down moves between rows; Left/Right moves within the regular roster only.*
-
-**Battle Arena Toshinden Desperation at Any Health** lets players perform
-each character's normal desperation command at any health. It does not add a
-one-button shortcut and does not change health, damage, KO handling, max HP, or
-HUD gauges.
-
-The shared framework also supplies standard enhancement packages, including
-PGXP. Each package's description and options are available on the Mods page.
-All title enhancements are optional and disabled by default.
+Native release packaging follows the Tomba 2 / Mega Man X6 scripts:
+`tools/package_release.ps1` produces the Windows ZIP and
+`tools/package_appimage.sh` produces the Linux AppImage. Both read root `VERSION`
+and stage clean player defaults from `packaging/release/`. Packaging requires
+locally generated game code; it excludes disc data, retail BIOS files, and saves.
 
 ## Netplay
 
