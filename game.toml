@@ -45,6 +45,7 @@ aspect_ratio = "4:3"
 
 [controller]
 default_mode = "digital"
+multitap_analog = true
 
 [widescreen]
 # Activation belongs to the default-disabled title mod in the launcher.
