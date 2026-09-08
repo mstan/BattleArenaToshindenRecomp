@@ -9,7 +9,6 @@ save_compatibility = "shared"
 
 [[target]]
 game_id = "SCUS-94200"
-exe_sha256 = "928c495ca0e9221d034085e17a79e81789738b0c389898c1d5f2384f51330f66"
 
 [[feature]]
 id = "frame-interpolation"

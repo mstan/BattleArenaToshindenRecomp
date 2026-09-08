@@ -1,3 +1,16 @@
+# 0.1.3 - Clean Install Mod Target Fix
+
+- Fixed bundled Toshinden mod packages being rejected on clean player installs
+  with "package does not target this game/image", including Widescreen,
+  Frame Interpolation, Extra Roster, and Desperation at Any Health.
+
+Includes Windows x64 ZIP and Linux x86_64 AppImage builds. This is a targeted
+hotfix over 0.1.2.
+
+Provide your own USA 14-track BIN/CUE disc image. MIT-licensed OpenBIOS is
+bundled; no disc data or retail BIOS is included. Linux requires glibc 2.38
+or newer. See README.md for setup instructions.
+
 # 0.1.2 - Alternate Portraits and Visual Fixes
 
 - Added distinct alternate portraits for Gaia and Sho, with opposite-facing

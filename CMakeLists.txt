@@ -38,6 +38,21 @@ psxrecomp_add_game_runtime(psx-runtime
 
 target_sources(psx-runtime PRIVATE ${TOSHINDEN_MOD_PLUGIN_SOURCES})
 
+if(BUILD_TESTING)
+    add_executable(toshinden_preloaded_mod_targets_test
+        tests/test_preloaded_mod_targets.cpp
+        psxrecomp/runtime/src/mod_packages.cpp
+        psxrecomp/runtime/src/crc32.c
+        psxrecomp/runtime/src/psx_sha256.c)
+    target_include_directories(toshinden_preloaded_mod_targets_test PRIVATE
+        psxrecomp/runtime/include
+        psxrecomp/recompiler/lib/toml11)
+    target_compile_definitions(toshinden_preloaded_mod_targets_test PRIVATE
+        TOSHINDEN_SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
+    add_test(NAME toshinden_preloaded_mod_targets_test
+             COMMAND toshinden_preloaded_mod_targets_test)
+endif()
+
 # Stage runtime configs next to the exe for direct build/ launches. Only copy
 # files that exist; never fail POST_BUILD when game_options.toml is absent.
 foreach(_PSX_RUNTIME_CONFIG game.toml game_options.toml)
