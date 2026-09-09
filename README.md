@@ -143,6 +143,8 @@ and known limits.
 
 ## License
 
+PolyForm Noncommercial 1.0.0. See `LICENSE`.
+
 No game disc data or retail PlayStation BIOS is redistributed here. OpenBIOS
 is provided under its MIT license; see the framework's OpenBIOS license notice.
 Launcher box art attribution is recorded in
