@@ -1,0 +1,478 @@
+{
+  "format": "psxrecomp supported-disc overlay assessment v1",
+  "assessment": "No executable overlays found in the inspected USA SCUS-94200 build; additional overlay AOT is not justified by this assessment.",
+  "source": {
+    "serial": "SCUS-94200",
+    "data_track_bytes": 14662368,
+    "data_track_sha256": "13e58a261952047077217bff12e10a3fea7053ef793d93433e6ecdf54c9f285b",
+    "boot_exe": "SCUS_942.00",
+    "boot_exe_sha256": "928c495ca0e9221d034085e17a79e81789738b0c389898c1d5f2384f51330f66",
+    "boot_load_address": "0x80175000",
+    "boot_loaded_size": "0x00043800",
+    "boot_entry_pc": "0x80196CA8",
+    "boot_lba": 24,
+    "boot_file_bytes": 278528
+  },
+  "disc_layout": {
+    "data_track_sectors": 6234,
+    "iso_files": {
+      "SYSTEM.CNF": {
+        "lba": 23,
+        "bytes": 68
+      },
+      "SCUS_942.00": {
+        "lba": 24,
+        "bytes": 278528
+      }
+    },
+    "zero_gap_lba": [
+      160,
+      165
+    ],
+    "raw_asset_lba": [
+      165,
+      6084
+    ],
+    "zero_tail_lba": [
+      6084,
+      6234
+    ],
+    "audio_tracks": [
+      2,
+      14
+    ],
+    "form2_padding_lba": [
+      [
+        12,
+        16
+      ],
+      [
+        160,
+        165
+      ]
+    ]
+  },
+  "loader": {
+    "cd_read": "0x8019CCB4",
+    "async_read_wrapper": "0x80177950",
+    "game_cd_read_calls": [
+      "0x80177998",
+      "0x80177BB4",
+      "0x80177C3C",
+      "0x80177CE4",
+      "0x80177E1C",
+      "0x80177F28",
+      "0x80178014",
+      "0x801780A0",
+      "0x80178160",
+      "0x80178200",
+      "0x801782A4",
+      "0x80178388",
+      "0x80178484",
+      "0x80178654",
+      "0x801786F4",
+      "0x801787C0",
+      "0x8017888C",
+      "0x80178958",
+      "0x801789F8",
+      "0x80178A9C",
+      "0x80178B80",
+      "0x80178C80",
+      "0x80178E50",
+      "0x80178EF0",
+      "0x80178FBC"
+    ],
+    "sdk_sync_read_call": "0x8019E29C",
+    "async_wrapper_calls": [
+      "0x80189CD4",
+      "0x8018AA40",
+      "0x8018AEB8",
+      "0x8018AF54",
+      "0x8018AFF0",
+      "0x8018B088",
+      "0x8018B168",
+      "0x8018B204",
+      "0x8018B4FC",
+      "0x8018B558",
+      "0x8018B6D0",
+      "0x8018B71C",
+      "0x8018B790",
+      "0x8018B890",
+      "0x8018B9E8",
+      "0x8018BA44",
+      "0x8018BC1C"
+    ],
+    "post_read_consumers": {
+      "texture_upload": "0x80197A7C",
+      "model_relocation": "0x80195344",
+      "model_primitive_conversion": "0x80193BA4",
+      "sound_upload": "0x80196EA0",
+      "sector_dma_completion": "0x8019DD94",
+      "cd_data_event_callback": "0x8019E148"
+    },
+    "resident_dispatch_tables": [
+      {
+        "address": "0x80175098",
+        "entries": 9
+      },
+      {
+        "address": "0x801750C0",
+        "entries": 9
+      },
+      {
+        "address": "0x801750E4",
+        "entries": 10
+      },
+      {
+        "address": "0x8017510C",
+        "entries": 10
+      },
+      {
+        "address": "0x80175134",
+        "entries": 6
+      },
+      {
+        "address": "0x8017514C",
+        "entries": 16
+      },
+      {
+        "address": "0x8017518C",
+        "entries": 16
+      },
+      {
+        "address": "0x801751CC",
+        "entries": 10
+      },
+      {
+        "address": "0x801751F4",
+        "entries": 5
+      },
+      {
+        "address": "0x80175230",
+        "entries": 9
+      },
+      {
+        "address": "0x80175254",
+        "entries": 39
+      },
+      {
+        "address": "0x801752F4",
+        "entries": 8
+      },
+      {
+        "address": "0x801756AC",
+        "entries": 32
+      },
+      {
+        "address": "0x801AC528",
+        "entries": 45
+      }
+    ]
+  },
+  "ranges": [
+    {
+      "name": "game_and_sdk_instructions",
+      "address": "0x80176E90",
+      "bytes": 218656,
+      "sha256": "1b472a8786a7b1714588d0484a7ad5168da0cc9c599b2ad90c5b8a1519c06e79"
+    },
+    {
+      "name": "raw_sector_locations",
+      "address": "0x801B6810",
+      "bytes": 464,
+      "sha256": "febc9b69c69165d757431dcd3f3ebc2192c410c91f003934e1b5bd97b6fcc5cb"
+    },
+    {
+      "name": "asset_size_tables",
+      "address": "0x801B69E0",
+      "bytes": 424,
+      "sha256": "856a32fc1fe14813b896c453e584bfe44fa7d8ce5b4a136a6cc860555bb13e41"
+    },
+    {
+      "name": "model_relocation",
+      "address": "0x80195344",
+      "bytes": 280,
+      "sha256": "d929e8d138b179cf939ca57a08a05dedcb65f39bb104d5dc2bf37e6d01552e46"
+    },
+    {
+      "name": "sound_upload",
+      "address": "0x80196EA0",
+      "bytes": 284,
+      "sha256": "f553660441d0b245124a91fce2ae77bad32036361bf7956f669ae26a7894dc4f"
+    },
+    {
+      "name": "cd_sector_completion",
+      "address": "0x8019DD94",
+      "bytes": 284,
+      "sha256": "0d6f78232ca689e18dd938aeaa28dea6f0ad9c4df612bc80e1dceb69946cf8d2"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x80175098",
+      "bytes": 36,
+      "sha256": "4783dc405f7f97c3b26971a8811c3627f7759523a03a930b677a80a6b741a75b"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801750C0",
+      "bytes": 36,
+      "sha256": "5e66b10e12c0e217931433d34ae5ebbb2232ed3fa99cee4a268e06a773017e98"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801750E4",
+      "bytes": 40,
+      "sha256": "560095e2188f2613dd05908d17f14af847b19f97be09c958d56f973e95f4390f"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x8017510C",
+      "bytes": 40,
+      "sha256": "c192ad7f9f01eb7a40dfd7e1006324bf911f07d63eacc9151910a4de376838a5"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x80175134",
+      "bytes": 24,
+      "sha256": "5bd63ae80e99c73926a02c730ecd5f411d3ba2fec43e6a2bc05a0f94c520b6f1"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x8017514C",
+      "bytes": 64,
+      "sha256": "9563a069a84a19e130baf509791fb62ad589a28af4f63f3863f150732f045522"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x8017518C",
+      "bytes": 64,
+      "sha256": "a265cf52daf18f1424c4c9a2e0b6761a95daebceaed24635506e153573acdfa7"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801751CC",
+      "bytes": 40,
+      "sha256": "05325ad8cda3c1614eb23d7db4dd042e7aa055b4ee9230bc0162ff44acef5c0b"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801751F4",
+      "bytes": 20,
+      "sha256": "4634b0c6a1fc5614446d522203b891d3f99066f39c226f3d7cb25b60fe28532c"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x80175230",
+      "bytes": 36,
+      "sha256": "9de436dc49c46f45a1f960f83ffd9316e8b20a87aa4bea967d7624132511300f"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x80175254",
+      "bytes": 156,
+      "sha256": "ddc0982b229e185f10027aaca62c30f95c945012354b499667402d715c4d3c4a"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801752F4",
+      "bytes": 32,
+      "sha256": "78f6574a0bfc0f5415a58b504321a108d1c31e4872cd21fac07aeab6920537bd"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801756AC",
+      "bytes": 128,
+      "sha256": "0c98854af0b59e7e3912b3a47648fb4a42de85a7ec81b42b15206353676027c6"
+    },
+    {
+      "name": "resident_dispatch_table",
+      "address": "0x801AC528",
+      "bytes": 180,
+      "sha256": "fc1874b3df46b42c909d7ebbc5147230986420a93e129f3acbc440f2ac31b034"
+    }
+  ],
+  "loader_evidence": [
+    {
+      "method": "words",
+      "file": "SCUS_942.00",
+      "base": "0x80175000",
+      "file_offset": "0x800",
+      "values": {
+        "0x80177958": "0x00808021",
+        "0x8017795C": "0xAFB20018",
+        "0x80177960": "0x00A09021",
+        "0x80177964": "0xAFB10014",
+        "0x80177968": "0x00C08821",
+        "0x8017796C": "0x34020001",
+        "0x80177970": "0xAFBF001C",
+        "0x80177974": "0xA4E20360",
+        "0x80177978": "0x34040002",
+        "0x8017797C": "0x02002821",
+        "0x80177980": "0x0C0672FF",
+        "0x80177984": "0x00003021",
+        "0x80177988": "0x1040FFFC",
+        "0x8017798C": "0x34040002",
+        "0x80177990": "0x02202021",
+        "0x80177994": "0x02402821",
+        "0x80177998": "0x0C06732D",
+        "0x8017799C": "0x34060080",
+        "0x80177BB4": "0x0C06732D",
+        "0x80177C3C": "0x0C06732D",
+        "0x80177CE4": "0x0C06732D",
+        "0x80177E1C": "0x0C06732D",
+        "0x80177F28": "0x0C06732D",
+        "0x80178014": "0x0C06732D",
+        "0x801780A0": "0x0C06732D",
+        "0x80178160": "0x0C06732D",
+        "0x80178200": "0x0C06732D",
+        "0x801782A4": "0x0C06732D",
+        "0x80178388": "0x0C06732D",
+        "0x80178484": "0x0C06732D",
+        "0x80178654": "0x0C06732D",
+        "0x801786F4": "0x0C06732D",
+        "0x801787C0": "0x0C06732D",
+        "0x8017888C": "0x0C06732D",
+        "0x80178958": "0x0C06732D",
+        "0x801789F8": "0x0C06732D",
+        "0x80178A9C": "0x0C06732D",
+        "0x80178B80": "0x0C06732D",
+        "0x80178C80": "0x0C06732D",
+        "0x80178E50": "0x0C06732D",
+        "0x80178EF0": "0x0C06732D",
+        "0x80178FBC": "0x0C06732D",
+        "0x8017D014": "0x00021080",
+        "0x8017D018": "0x3C01801B",
+        "0x8017D01C": "0x2421C528",
+        "0x8017D020": "0x00220821",
+        "0x8017D024": "0x8C220000",
+        "0x8017D028": "0x00000000",
+        "0x8017D02C": "0x0040F809",
+        "0x80189CD4": "0x0C05DE54",
+        "0x8018AA40": "0x0C05DE54",
+        "0x8018AEB8": "0x0C05DE54",
+        "0x8018AF54": "0x0C05DE54",
+        "0x8018AFF0": "0x0C05DE54",
+        "0x8018B088": "0x0C05DE54",
+        "0x8018B168": "0x0C05DE54",
+        "0x8018B204": "0x0C05DE54",
+        "0x8018B4FC": "0x0C05DE54",
+        "0x8018B558": "0x0C05DE54",
+        "0x8018B6D0": "0x0C05DE54",
+        "0x8018B71C": "0x0C05DE54",
+        "0x8018B790": "0x0C05DE54",
+        "0x8018B890": "0x0C05DE54",
+        "0x8018B9E8": "0x0C05DE54",
+        "0x8018BA44": "0x0C05DE54",
+        "0x8018BC08": "0x3C04801B",
+        "0x8018BC0C": "0x2484687C",
+        "0x8018BC10": "0x3C058013",
+        "0x8018BC14": "0x34A55000",
+        "0x8018BC18": "0x34060080",
+        "0x8018BC1C": "0x0C05DE54",
+        "0x8018BC20": "0x02E03821",
+        "0x8019537C": "0x8E280008",
+        "0x80195380": "0x00A03021",
+        "0x80195384": "0x1900000F",
+        "0x80195388": "0x01003821",
+        "0x8019538C": "0x2624001C",
+        "0x80195390": "0x8CA20000",
+        "0x80195394": "0x24E7FFFF",
+        "0x80195398": "0x00C21021",
+        "0x8019539C": "0xACA20000",
+        "0x801953A0": "0x24A5001C",
+        "0x801953A4": "0x8C82FFF8",
+        "0x801953A8": "0x8C830000",
+        "0x801953AC": "0x00C21021",
+        "0x801953B0": "0x00C31821",
+        "0x801953B4": "0xAC82FFF8",
+        "0x801953B8": "0xAC830000",
+        "0x801953BC": "0x1CE0FFF4",
+        "0x801953C0": "0x2484001C",
+        "0x801953E4": "0xAFA20010",
+        "0x801953E8": "0x8E050008",
+        "0x801953EC": "0x8E060000",
+        "0x801953F0": "0x2610001C",
+        "0x801953F4": "0x8E270000",
+        "0x801953F8": "0x0C064EE9",
+        "0x801953FC": "0x2631001C",
+        "0x80196F40": "0x00102C00",
+        "0x80196F44": "0x00052C03",
+        "0x80196F48": "0x0C0682B2",
+        "0x80196F4C": "0x02203021",
+        "0x80196F78": "0x0C069279",
+        "0x80196F7C": "0x02602021",
+        "0x80196F80": "0x00021400",
+        "0x80196F84": "0x00021403",
+        "0x80196F88": "0x10500004",
+        "0x80196F8C": "0x2402FFFF",
+        "0x80196F90": "0x0C069EFE",
+        "0x80196F94": "0x34040001",
+        "0x8019DC10": "0x3C02801D",
+        "0x8019DC14": "0x8C4263EC",
+        "0x8019DC18": "0x3C03801A",
+        "0x8019DC1C": "0x2463DD94",
+        "0x8019DC20": "0x3C01801D",
+        "0x8019DC24": "0xAC2363EC",
+        "0x8019DDD8": "0x0C0677AC",
+        "0x8019DDDC": "0x00000000",
+        "0x8019DDE0": "0x3C02801C",
+        "0x8019DDE4": "0x8C42AB00",
+        "0x8019DDE8": "0x3C03801C",
+        "0x8019DDEC": "0x8C63AAFC",
+        "0x8019DDF0": "0x00021080",
+        "0x8019DDF4": "0x00431021",
+        "0x8019DDF8": "0x3C01801C",
+        "0x8019DDFC": "0xAC22AAFC",
+        "0x8019DE00": "0x8E020000",
+        "0x8019DE04": "0x00000000",
+        "0x8019DE08": "0x2442FFFF",
+        "0x8019DE0C": "0xAE020000",
+        "0x8019DE44": "0x3C02801D",
+        "0x8019DE48": "0x8C4260FC",
+        "0x8019DE4C": "0x00000000",
+        "0x8019DE50": "0x10400004",
+        "0x8019DE54": "0x00000000",
+        "0x8019DE58": "0x34040005",
+        "0x8019DE5C": "0x0040F809",
+        "0x8019DE60": "0x02202821",
+        "0x8019E03C": "0x3C04801A",
+        "0x8019E040": "0x2484E0F8",
+        "0x8019E044": "0x0C0672A5",
+        "0x8019E048": "0x00000000",
+        "0x8019E04C": "0x3C04801A",
+        "0x8019E050": "0x2484E120",
+        "0x8019E054": "0x0C0672AB",
+        "0x8019E058": "0x00000000",
+        "0x8019E05C": "0x3C04801A",
+        "0x8019E060": "0x2484E148",
+        "0x8019E064": "0x0C0672B1",
+        "0x8019E148": "0x27BDFFE8",
+        "0x8019E14C": "0xAFBF0010",
+        "0x8019E150": "0x3C04F000",
+        "0x8019E154": "0x34840003",
+        "0x8019E158": "0x0C06785C",
+        "0x8019E15C": "0x34050040",
+        "0x8019E160": "0x8FBF0010",
+        "0x8019E164": "0x00000000",
+        "0x8019E168": "0x03E00008",
+        "0x8019E16C": "0x27BD0018",
+        "0x8019E170": "0x240A00B0",
+        "0x8019E174": "0x01400008",
+        "0x8019E178": "0x24090007",
+        "0x8019E29C": "0x0C06732D"
+      }
+    }
+  ],
+  "corroborating_scans": {
+    "domain": "All Mode 2 user bytes outside the boot EXE, including non-ISO raw sectors. Includes the full 2324-byte payload of Form 2 padding sectors and unaligned signature matches.",
+    "psx_exe_signatures": 0,
+    "jr_ra_signatures": 0,
+    "limitations": "Signature absence alone cannot rule out compressed, synthesized, or nonstandard machine code. The inspected read consumers and resident dispatch tables provide the primary scope evidence."
+  },
+  "limitations": [
+    "Only the supported USA SCUS-94200 disc is assessed.",
+    "This is a bounded static loader assessment, not a universal absence proof or exhaustive gameplay validation.",
+    "No RAM capture, historical fragment inventory, or observed cache was used as authority or build input.",
+    "Existing boot-EXE AOT and runtime fallback are unchanged; no extra shard recipe or release is created."
+  ]
+}

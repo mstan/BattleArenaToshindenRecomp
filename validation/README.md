@@ -1,5 +1,10 @@
 # Validated baseline
 
+The September 11, 2026 [original-disc overlay assessment](../docs/OVERLAY_ASSESSMENT.md)
+found no executable overlays in the inspected supported USA build. It records
+original hashes, raw-sector loader and consumer evidence, and reproducible byte
+checks; no additional overlay AOT shards or binary release were needed.
+
 Battle Arena Toshinden (USA), SCUS-94200, was stood up with the framework's
 New Project Layout and `psxrecomp_cli.py` Generate / rebuild workflow.
 
