@@ -24,3 +24,11 @@ id = "toshinden.boss-roster.enable"
 [[plugin]]
 feature = "boss-roster"
 id = "toshinden.boss-roster.ui"
+
+[[plugin]]
+feature = "boss-roster"
+id = "toshinden.boss-roster.select-helper"
+
+[[plugin]]
+feature = "boss-roster"
+id = "toshinden.boss-roster.ui-final-ot"

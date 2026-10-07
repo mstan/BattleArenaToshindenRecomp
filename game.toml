@@ -30,6 +30,7 @@ known_crc32 = [
 ]
 
 [recompiler]
+bios_config = "psxrecomp/bios/SCPH1001.toml"
 seeds = "seeds/ghidra_funcs.txt"
 out_dir = "generated"
 strict = true
@@ -70,6 +71,7 @@ screen_h_imms = ["0xF0"]
 # Online mount gate: digests + track count + optional TOC fingerprint
 # (see docs/NETPLAY.md).
 [netplay]
+content_negotiation = true
 require_cue = true
 required_tracks = 14
 required_disc_fp = "436b9f6c0d2d44b61e2e0608ddfa1fdbaf7b8fec289a5ea563d1be6225c40cd4"

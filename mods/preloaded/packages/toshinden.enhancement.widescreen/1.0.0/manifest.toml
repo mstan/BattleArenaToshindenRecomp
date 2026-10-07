@@ -47,3 +47,11 @@ when = { aspect = "adaptive" }
 [[plugin]]
 feature = "widescreen"
 id = "toshinden.widescreen.backdrop-preserve"
+
+[[plugin]]
+feature = "widescreen"
+id = "toshinden.widescreen.final-ot"
+
+[[plugin]]
+feature = "widescreen"
+id = "toshinden.widescreen.backdrop-prim"

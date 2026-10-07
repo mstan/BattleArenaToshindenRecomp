@@ -33,6 +33,18 @@ static void check_package_resolves_without_exe_hash(const fs::path& mods_root,
                             "package does not target this game/image: " + package_id;
                     });
     check(!target_rejected, package_id + " must target clean player installs");
+    const auto requires_hook = [&](const char* id) {
+        check(std::any_of(resolution.plugins.begin(), resolution.plugins.end(),
+                          [&](const auto& plugin) { return plugin.id == id; }),
+              package_id + " must explicitly select hook " + id);
+    };
+    if (package_id == "toshinden.enhancement.widescreen") {
+        requires_hook("toshinden.widescreen.final-ot");
+        requires_hook("toshinden.widescreen.backdrop-prim");
+    } else if (package_id == "toshinden.gameplay.boss-roster") {
+        requires_hook("toshinden.boss-roster.select-helper");
+        requires_hook("toshinden.boss-roster.ui-final-ot");
+    }
 }
 
 int main() {
