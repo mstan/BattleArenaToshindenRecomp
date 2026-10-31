@@ -12,7 +12,8 @@ and [recomp-ui](https://github.com/mstan/recomp-ui).
 
 ## Status
 
-**0.1.2** is believed to be stable despite being an early release.
+**0.1.4** adopts the shared optimized release pipeline and current launcher.
+The game remains an early release.
 Bug reports are welcome; see
 [validation notes](validation/README.md) for the tested build and scope.
 
@@ -62,21 +63,28 @@ The shared framework also supplies standard enhancement packages, including
 PGXP. Each package's description and options are available on the Mods page.
 All title enhancements are optional and disabled by default.
 
+Fresh profiles enable the shared **Internal Resolution** mod at **4x**, with
+**1x through 32x** choices subject to GPU texture and memory limits. Existing
+mod selections are preserved; disabling this mod selects native resolution.
+CD Speed and Fast Loading packages are excluded from public releases.
+
 ## Playing
 
-Download the **Windows ZIP** or **Linux x86_64 AppImage** from
+Download the current **Windows ZIP** from
 [Releases](https://github.com/mstan/BattleArenaToshindenRecomp/releases/latest).
-Extract the Windows package before running it. On Linux, make the AppImage
-executable and launch it. These packages contain the compiled game runtime.
-The Linux package requires glibc 2.38 or newer, such as Ubuntu 24.04.
+Extract the package before running it; it contains the compiled game runtime.
+The earlier [v0.1.3 Linux AppImage](https://github.com/mstan/BattleArenaToshindenRecomp/releases/tag/v0.1.3)
+remains available separately and requires glibc 2.38 or newer. The current
+source retains its Linux AppImage build route; this Windows release does not
+claim a newly built or qualified Linux artifact.
 
 Select your legally obtained **USA BIN/CUE disc image** in the launcher, use
 Generate & Build when prompted, and launch the game. Keep all 14 tracks beside
 the CUE file so the game can play its CD audio.
 
-The framework supplies MIT-licensed OpenBIOS. A supported retail BIOS dump is
-optional; validation used SCPH1001. Disc images and retail BIOS files are not
-included in this repository.
+The public build supplies MIT-licensed OpenBIOS and an OpenBIOS-only backend.
+Older validation using SCPH1001 remains historical evidence. Disc images and
+retail BIOS files are not included in this repository or public package.
 
 Enable enhancements on the launcher's **Mods** page. The title's widescreen,
 frame blending, and optional gameplay packages are disabled by default. Saves and
@@ -114,8 +122,24 @@ The launcher also exposes the same Generate & Build workflow. See the
 and other platforms. SDL3 is the default host backend; SDL2 is an explicit
 compatibility build option.
 
-To package a local build, use `tools/package_release.ps1` for a Windows ZIP
-or `tools/package_appimage.sh` for a Linux AppImage.
+Official optimized game releases use the shared builder from the title root:
+
+```powershell
+& psxrecomp/tools/package_title_release.ps1 --channel public --platform windows --jobs 2
+```
+
+The original boot executable must be present at `disc/SCUS_942.00`, and the
+original fourteen-track CUE/BIN set must match `game.toml`. The builder
+regenerates source, performs fresh selective PGO on supported GNU/Ninja builds,
+requires normal profiling close, and verifies the final public archive.
+Profiling does not establish gameplay coverage or a per-title speedup.
+
+`tools/package_release.ps1` and `tools/package_appimage.sh` delegate to this
+builder and take its options. Linux builds additionally require the supported
+Linux dependencies described in the shared releasing guide. The explicitly
+dispatched setup-host CI workflow remains a no-disc host build; it does not
+qualify a compiled optimized game release. See
+[RELEASE_NOTES.md](RELEASE_NOTES.md) for current scope.
 
 ## Netplay
 
@@ -140,6 +164,8 @@ online check, not exhaustive testing of different networks or adverse connection
 conditions. See the [netplay guide](psxrecomp/docs/NETPLAY.md) for connection
 options and the [validation notes](validation/README.md) for the tested scope
 and known limits.
+Those observations used earlier pinned builds. The 0.1.4 package/profile
+checks do not repeat or broaden that netplay qualification.
 
 ## License
 

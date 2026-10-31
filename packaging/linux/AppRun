@@ -24,7 +24,7 @@ fi
 payload=$APPDIR/usr/share/@PAYLOAD_DIR@
 runtime=$APPDIR/usr/bin/@EXE_NAME@
 
-if [ ! -x "$runtime" ] || [ ! -f "$payload/@GAME_TOML@" ]; then
+if [ ! -x "$runtime" ] || [ ! -f "$payload/game.toml" ]; then
     echo "@APP_NAME@: AppImage payload is incomplete." >&2
     exit 1
 fi
@@ -43,7 +43,7 @@ if [ -d "$payload/mods" ]; then
     chmod -R u+rwX "$data_dir/mods"
 fi
 
-for file in @GAME_TOML@ game_options.toml README.md VERSION RELEASE_NOTES.md THIRD_PARTY_ATTRIBUTION.md RELEASE.txt START_HERE.txt LICENSE; do
+for file in game.toml game_options.toml README.md VERSION RELEASE_NOTES.md THIRD_PARTY_ATTRIBUTION.md RELEASE.txt START_HERE.txt LICENSE; do
     if [ -f "$payload/$file" ]; then
         cp -f "$payload/$file" "$data_dir/$file"
         chmod u+rw "$data_dir/$file"
