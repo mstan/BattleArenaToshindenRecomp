@@ -31,6 +31,9 @@ psxrecomp_add_game_runtime(psx-runtime
     LAUNCHER_BOXART "${CMAKE_CURRENT_SOURCE_DIR}/launcher_assets/img/boxart.tga"
     APP_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/psxrecomp.ico"
     PRELOADED_MODS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/mods/preloaded"
+    EXCLUDE_BUILTIN_MODS
+        psx.enhancement.cd-speed
+        psx.enhancement.fast-loading
     GEN_MARKER "generated/SCUS_942.00_dispatch.c"
     GEN_FULL_GLOB "generated/SCUS_942.00_full_*.c"
     CODEGEN_SETUP_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/codegen_setup.c"
@@ -39,14 +42,20 @@ psxrecomp_add_game_runtime(psx-runtime
 target_sources(psx-runtime PRIVATE ${TOSHINDEN_MOD_PLUGIN_SOURCES})
 
 if(BUILD_TESTING)
+    enable_testing()
     add_executable(toshinden_preloaded_mod_targets_test
         tests/test_preloaded_mod_targets.cpp
         psxrecomp/runtime/src/mod_packages.cpp
+        psxrecomp/runtime/src/mod_media.cpp
+        psxrecomp/runtime/src/iso_reader.cpp
+        psxrecomp/runtime/src/cue_sheet.cpp
         psxrecomp/runtime/src/crc32.c
         psxrecomp/runtime/src/psx_sha256.c)
     target_include_directories(toshinden_preloaded_mod_targets_test PRIVATE
         psxrecomp/runtime/include
+        psxrecomp/recompiler/include
         psxrecomp/recompiler/lib/toml11)
+    target_link_libraries(toshinden_preloaded_mod_targets_test PRIVATE chdr-static)
     target_compile_definitions(toshinden_preloaded_mod_targets_test PRIVATE
         TOSHINDEN_SOURCE_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
     add_test(NAME toshinden_preloaded_mod_targets_test

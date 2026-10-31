@@ -8,7 +8,7 @@ appimage=${1:-}
 
 root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 expected_version=$(tr -d ' \t\r\n' < "$root/VERSION")
-expected_version=v${expected_version#v}
+expected_version=${expected_version#v}
 # shellcheck source=/dev/null
 . "$root/packaging/release/app.conf"
 GAME_TOML=${GAME_TOML:-game.toml}

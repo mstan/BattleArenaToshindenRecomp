@@ -1,3 +1,27 @@
+# 0.1.4 - Shared Optimized Release Pipeline
+
+- Adopted the reviewed shared engine and current launcher, with fresh
+  title-specific selective PGO through the maintained release builder.
+- Fresh profiles enable Internal Resolution at 4x, with 1x through 32x
+  choices subject to GPU texture and memory admission. Saved mod choices
+  remain supported. CD Speed and Fast Loading packages are excluded.
+- Retained the current declared widescreen and hidden-roster hooks, Gaia/Sho
+  portraits, digital controller lock, native memory cards and negotiated
+  two-player netplay configuration. The player config now preserves the
+  source's content-negotiation gate.
+- Updated the existing mod-target fixture's dependencies for the current
+  resource reader, without changing its original hook/target assertions.
+
+This release supplies a Windows x64 public ZIP with OpenBIOS. Original game
+media, retail BIOS, personal saves/settings and private compiler profiles are
+not bundled. Source retains the shared Linux AppImage build route; the earlier
+v0.1.3 Linux artifact remains available separately.
+
+Fresh profiling and package checks do not establish a new per-title speedup,
+broader gameplay coverage or a new netplay qualification. Earlier observations
+and their limits remain in the validation notes. No old snapshot compatibility
+or migration is required; native memory-card progress remains separate.
+
 # 0.1.3 - Clean Install Mod Target Fix
 
 - Fixed bundled Toshinden mod packages being rejected on clean player installs

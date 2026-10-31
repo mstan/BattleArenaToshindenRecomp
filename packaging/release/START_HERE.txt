@@ -1,27 +1,31 @@
-Battle Arena Toshinden Recompiled 0.1.2
+Battle Arena Toshinden Recompiled @VERSION@
 
-Believed to be stable based on gameplay testing and user validation,
-despite being an early release. Bug reports are welcome.
+Extract the Windows ZIP into a writable folder and keep its files together.
+Choose your own USA SCUS-94200 CUE/BIN disc set in the launcher. Keep all
+fourteen tracks beside the CUE so original CD audio remains available.
+The compiled public runtime and MIT-licensed OpenBIOS are bundled; original
+game media and retail BIOS are not included.
 
-1. Extract the Windows ZIP, or mark the Linux AppImage executable and run it.
-2. Select your legally obtained USA BIN/CUE disc image in the launcher.
-   Keep all 14 tracks together beside the CUE. No disc data is included.
-3. The bundled MIT-licensed OpenBIOS is available by default. You can also
-   select a supported retail BIOS dump that you provide.
-4. Optional enhancements are on the Mods page and ship disabled.
-5. Choose PLAY for local play, or NETPLAY to host/join a two-player session.
-   Configure your local controller under PLAYER 1 / NETPLAY. In the game,
-   choose VS HUMAN or have P2 press Start. Multitap is not used.
+Fresh profiles use the shared Internal Resolution mod at 4x. Its 1x through
+32x choices are bounded by GPU texture and memory limits. Saved mod choices
+remain authoritative; disabling Internal Resolution selects native resolution.
+CD Speed and Fast Loading packages are excluded.
 
-Online hosts can select Extra Roster in the lobby's Mods page. Guests use
-View Mods to inspect the host's selection; it applies automatically when
-the match starts. Gaia and Sho were checked in an online relay session.
-LAN / Direct IP sessions run without mods. See README.md for tested scope.
+The title's adaptive/fixed widescreen, frame blending, Gaia/Sho Extra Roster,
+independent alternate portraits and desperation-command enhancements remain
+optional and disabled by default. The digital controller lock is retained.
+Configure your connected controller in the launcher. Select changes costume
+and portrait on character selection. Native memory-card saves and settings
+remain local; no personal state is bundled.
 
-On Windows, keep the package together in a writable folder. Your settings
-and saves are local. On Linux, the AppImage creates a writable user data
-folder at ~/.local/share/BattleArenaToshindenRecomp (or under XDG_DATA_HOME).
-Set BAT_RECOMP_DATA_DIR to override this location.
+NETPLAY uses the existing two-player negotiated session path. Online hosts
+can select Extra Roster through Mods; both players require matching builds,
+packages and the verified fourteen-track disc. Existing gameplay/netplay
+observations are documented in README.md and validation/README.md; this
+release does not claim a new netplay, performance or gameplay campaign.
 
-Project, instructions, and issue reports:
+The current release is a Windows build. Source retains the shared Linux
+AppImage command; an older Linux artifact remains in the v0.1.3 release.
+See README.md and RELEASE_NOTES.md for build instructions and limitations.
+
 https://github.com/mstan/BattleArenaToshindenRecomp
