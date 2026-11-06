@@ -23,7 +23,7 @@ ship = false
 
 [payload]
 start_here = "packaging/release/START_HERE.txt"
-files = ["README.md", "RELEASE_NOTES.md", "LICENSE",
+files = ["README.md", "RELEASE_NOTES.md", "LICENSE", "PERMISSIONS.md",
   { from = "packaging/release/input.ini", to = "input.ini" }]
 
 [linux]
