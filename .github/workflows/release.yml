@@ -57,8 +57,8 @@ on:
         required: false
         type: boolean
         default: true
-  # Native Windows/AppImage releases use tools/package_release.ps1 and
-  # tools/package_appimage.sh. Keep setup-host builds explicitly dispatched
+  # Native Windows and AppImage releases use the shared psxrecomp packager.
+  # Keep setup-host builds explicitly dispatched
   # so a native release tag does not publish a second set of setup-only assets.
 
 concurrency:
