@@ -15,7 +15,7 @@ id = "widescreen"
 name = "Widescreen"
 description = "Enable Battle Arena Toshinden's widescreen rendering and choose a fixed or resize-driven aspect."
 group = "Display"
-default_enabled = false
+default_enabled = true
 
 [[option]]
 feature = "widescreen"

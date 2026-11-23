@@ -1,3 +1,9 @@
+# 0.1.5 - Shared Windows and Linux Packages
+
+- Uses the shared release packager for the Windows ZIP and Linux AppImage.
+- Fresh profiles enable Adaptive Widescreen. Updates retain saved preferences.
+- Select your own USA 14-track BIN/CUE disc image. OpenBIOS is included.
+
 # 0.1.4 - Shared Optimized Release Pipeline
 
 - Adopted the reviewed shared engine and current launcher, with fresh

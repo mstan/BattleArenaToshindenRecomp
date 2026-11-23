@@ -12,6 +12,7 @@ runtime_target = "psx-runtime"
 [build]
 regenerate = true
 selective_pgo = true
+pgo_train_frames = 600
 cmake_args = ["-DPSX_SDL_BACKEND=SDL3", "-DPSX_EXECUTION_PROFILE=ENHANCED"]
 windows_cmake_args = ["-DCMAKE_EXE_LINKER_FLAGS=-Wl,--no-insert-timestamp"]
 
@@ -27,8 +28,8 @@ files = ["README.md", "RELEASE_NOTES.md", "LICENSE", "PERMISSIONS.md",
   { from = "packaging/release/input.ini", to = "input.ini" }]
 
 [linux]
-app_run = "packaging/linux/AppRun"
+app_run = "psxrecomp/tools/new_project_layout/templates/AppRun.in"
 desktop_file = "packaging/linux/io.github.mstan.BattleArenaToshindenRecomp.desktop"
-icon = "launcher_assets/img/boxart.tga"
+icon = "assets/psxrecomp.png"
 payload_dir = "battlearenatoshindenrecomp"
 env_prefix = "BAT_RECOMP"

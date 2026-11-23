@@ -134,9 +134,10 @@ regenerates source, performs fresh selective PGO on supported GNU/Ninja builds,
 requires normal profiling close, and verifies the final public archive.
 Profiling does not establish gameplay coverage or a per-title speedup.
 
-`tools/package_release.ps1` and `tools/package_appimage.sh` delegate to this
-builder and take its options. Linux builds additionally require the supported
-Linux dependencies described in the shared releasing guide. The explicitly
+On Linux, run `python3 psxrecomp/tools/package_title_release.py package --channel
+public --platform linux`. Use `--channel playtest` for a playtest package on
+either platform. The Linux prerequisites are listed in the
+[shared releasing guide](psxrecomp/docs/RELEASING_A_TITLE.md). The explicitly
 dispatched setup-host CI workflow remains a no-disc host build; it does not
 qualify a compiled optimized game release. See
 [RELEASE_NOTES.md](RELEASE_NOTES.md) for current scope.
