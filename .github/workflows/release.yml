@@ -42,9 +42,9 @@ permissions:
   contents: write
 jobs:
   release:
-    uses: RetroPortingToolKit/psxrecomp/.github/workflows/title-release.yml@5d0378040e97ed583f5569295a720247e4101d7a
+    uses: RetroPortingToolKit/psxrecomp/.github/workflows/title-release.yml@8d2f3eced36aaa6e6efb8c06f7663f80d128ba47
     with:
-      provider-ref: 5d0378040e97ed583f5569295a720247e4101d7a
+      provider-ref: 8d2f3eced36aaa6e6efb8c06f7663f80d128ba47
       title: Battle Arena Toshinden Recompiled
       zip-prefix: bat
       platforms: '[{"os":"ubuntu-24.04","artifact":"linux-x64","shell":"bash"},{"os":"windows-2022","artifact":"windows-x64","shell":"msys2
